@@ -87,9 +87,9 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
         print('no Connection')
         
 def Forward():
-    leftFor.ChangeDutyCycle(50)
+    leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
-    rightFor.ChangeDutyCycle(50)
+    rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
                     
 def SpinLeft():
@@ -105,7 +105,11 @@ def SpinRight():
     rightBac.ChangeDutyCycle(0)
 
 def Sonar(): # Eight Sonar 
-    global datalist
+    global dataList, leftDutyCycle, rightDutyCycle
+    #dataList 3 to 10
+    leftDutyCycle = 50 + (dataList[7] - 50)
+    rightDutyCycle = 50 + (dataList[6] - 50)
+    
 
 # Step/time parameters
 lasttime = time.time() # Variable to store time for timesteps
@@ -143,4 +147,6 @@ while True:
                     SpinRight()
                     print('Right Hit')
                 else:
+                    Sonar()
+                    print (f'Left Wheel ', {leftDutyCycle}, ', right Wheel ', {rightDutyCycle})
                     Forward()
