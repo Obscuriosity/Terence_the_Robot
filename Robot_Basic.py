@@ -10,6 +10,13 @@ Build map
 import RPi.GPIO as GPIO
 import time
 import serial
+import math
+import random
+import numpy as np
+import QLDataHandling as DH
+import os.path
+import matplotlib.pyplot as plt
+import pickle
 
 # Serial Setup
 bot = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
@@ -31,13 +38,18 @@ rightBac = GPIO.PWM(18, 50)
 # initiate Motors
 leftDutyCycle, rightDutyCycle = 0, 0
 leftFor.start(leftDutyCycle)
-leftBac.start(0)
+leftBac.start(leftDutyCycle)
 rightFor.start(rightDutyCycle)
-rightBac.start(0)
+rightBac.start(rightDutyCycle)
 
 button = 4 # Pause Switch GPIO 4
 pause = 0  # Paused / Resume state
-    
+
+SQ = DH.LoadQTable(0) # Load short range 256 state Q Table
+LQ =  DH.LoadQTable(1) # Load long range 16 state Q table
+shortStates = DH.LoadStatesList(0) # Load short 256 state list
+longStates = DH.LoadStatesList(1) # Load long 16 state list
+
 # Lets have a function to stop the motors
 Stopped = False
 def Stop():
@@ -45,9 +57,9 @@ def Stop():
     global leftDutyCycle, rightDutyCycle
     leftDutyCycle, rightDutyCycle = 0, 0
     leftFor.ChangeDutyCycle(leftDutyCycle)
-    leftBac.ChangeDutyCycle(0)
+    leftBac.ChangeDutyCycle(leftDutyCycle)
     rightFor.ChangeDutyCycle(rightDutyCycle)
-    rightBac.ChangeDutyCycle(0)
+    rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def Pause(): # Pause routine, Uses sleep
     global pause
@@ -80,11 +92,137 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
             noData = False
             #print("DATA", dataList)
             # 0 = Left, 1 = Front and 2 = Right Bumper,
-            # 3 = Left Sonar No1, 4 = Left Secondary Sonar No2, 5 = Front Left Secondary Sonar No 3, 6 = Front Left Sonar No 4
-            # 7 = Front Right Sonar No5, 8 = Front Right Secondary Sonar No6, 9= Right Secondary Sonar No7, 10 = Right Sonar No 8.
+            # 3 = Left Sonar No 1, 4 = Left Secondary Sonar No 2, 5 = Front Left Secondary Sonar No 3, 6 = Front Left Sonar No 4
+            # 7 = Front Right Sonar No 5, 8 = Front Right Secondary Sonar No 6, 9= Right Secondary Sonar No 7, 10 = Right Sonar No 8.
             # 11 = left forward 12 = left back 13 = right forward 14 = right back encoders
     except:
         print('no Connection')
+        
+SHORT_DISTANCE = 15 # threshold in cm over which obstacles are ignored
+LONG_DISTANCE = 36 # threshold in cm over which obstacles are ignored
+short, long = false, false
+crashed = False
+
+        
+def SONAR(position): # Retrieve the state of individual Sonar
+    global dataList, SHORT_DISTANCE, LONG_DISTANCE
+    # Eight Sonar Script
+    if position == 0:
+        distance = dataList[3]
+        
+    if position == 1:
+        distance = dataList[4]
+        
+    if position == 2:
+        distance = dataList[5]
+        
+    if position == 3:
+        distance = dataList[6]
+        
+    if position == 4:
+        distance = dataList[7]
+        
+    if position == 5:
+        distance = dataList[8]
+        
+    if position == 6:
+        distance = dataList[9]
+        
+    if position == 7:
+        distance = dataList[10]
+
+    # Return a state based on distance to objects.
+    if distance > SHORT_DISTANCE or distance < 1: # newPing returns distances over 100cm as 0
+        State = 0
+    if distance < SHORT_DISTANCE + 1 and distance > 0:
+        State = 1
+
+    if distance > LONG_DISTANCE or distance < 1: # newPing returns distances over 100cm as 0
+        State = 0
+    if distance < LONG_DISTANCE + 1 and distance > 0:
+        State = 1
+        
+    return int(State)
+ 
+def getState(): # Returns state of the percieved world as a list i,e, distances from sonars and speed of wheels
+    global states, short, long
+    S1 = SONAR(0)  # read left sonar and get number from 0 or 1
+    S2 = SONAR(1)  # 
+    S3 = SONAR(2)  # 
+    S4 = SONAR(3)  # read left front sonar
+    S5 = SONAR(4)  # read right front sonar
+    S6 = SONAR(5)  # 
+    S7 = SONAR(6)  # 
+    S8 = SONAR(7)  # Read right most sonar
+    shortState = [S1, S2, S3, S4, S5, S6, S7, S8]
+    longState = [S1, S2, S3, S4]
+    ss = np.where((states == newState).all(axis=1))#
+    #print ("New State = ", newState)
+    #print ("State, s = ", s)
+    return ss, ls                   # return list index to retieve data about state and action values (Q values)
+
+def getReward():
+    global dataList, crashed
+    r = 0
+    if a == 0:
+        r += -5
+    if a == 2:
+        r += -5
+    if crashed == True:
+        r += -100
+    print ("Reward = ", r)
+    r = round(r, 2)
+    return (r)
+
+def QLearn(lesson):
+    global SQ, LQ, ss, ls, shortStates, longStates, alpha, gamma
+    if lesson == 0:
+        
+    r = getReward() # get reward based on action and distance from obstacles
+    print ("Old State = ", states[s])
+    newS = getState() # newS = index of state in states list
+    max_future_Q = np.max(Q[newS]) # Get Q Value of optimum action.
+    currentQ = Q[s,a]
+    print ("currentQ = ", currentQ)
+    #newQ = (1 - alpha) * currentQ + alpha * (r + gamma * max_future_Q)  # got from https://pythonprogramming.net/q-learning-reinforcement-learning-python-tutorial/
+    newQ = currentQ + alpha * (r + gamma * max_future_Q - currentQ) # Bellman equation, the heart of the Reinforcement Learning program
+    newQ = np.round(newQ, 2) # round down floats for a tidier Q Table
+    Q[s, a] = newQ
+    s = newS
+    #print ("NewQ = ", newQ)
+
+# Number of Actions = 6 # drive forward at 50%, spin left, spin right, turn Left, turn Right or reverse.
+def getAction(s): # pass the s index of Q table and epsilon, to get maxQ make epsilon 1
+    global SQ, LQ, leftDutyCycle, rightDutyCycle, epsilon
+    if ss and ls == 0:
+        leftDutyCycle, rightDutyCycle = 100, 100
+        action = 0
+    else:
+        randVal = 0
+        leftDutyCycle, rightDutyCycle = 50, 50
+        #Epsilon Greedy - if epsilon is below 1 there is a chance of a random allowed action being chosen (exploration)
+        randVal = random.randrange(1,101)
+        if randVal <= (1-epsilon)*100:
+            action = np.argmax(Q[s])
+        else:
+            action = random.randrange(0,3)
+            print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon) 
+    return(action)  
+
+  def Act(action):
+    global leftDutyCycle, rightDutyCycle
+    if action == 0: # Turn Left
+        TurnLeft()
+    if action == 1: # Spin Left
+        SpinLeft()
+    if action == 2: # Drive Forward
+        Forward()
+    if action == 3: # Spin Right
+        SpinRight()
+    if action == 4: # Turn Right
+        TurnRight()
+    if action == 5: # Reverse
+        Reverse()
         
 def Forward():
     leftFor.ChangeDutyCycle(leftDutyCycle)
@@ -92,32 +230,122 @@ def Forward():
     rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
                     
+def Reverse():
+    leftFor.ChangeDutyCycle(0)
+    leftBac.ChangeDutyCycle(leftDutyCycle)
+    rightFor.ChangeDutyCycle(0)
+    rightBac.ChangeDutyCycle(rightDutyCycle)
+
 def SpinLeft():
-    leftFor.ChangeDutyCycle(50)
+    leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
-    rightBac.ChangeDutyCycle(50)
+    rightBac.ChangeDutyCycle(rightDutyCycle)
     
 def SpinRight():
     leftFor.ChangeDutyCycle(0)
-    leftBac.ChangeDutyCycle(50)
-    rightFor.ChangeDutyCycle(50)
+    leftBac.ChangeDutyCycle(leftDutyCycle)
+    rightFor.ChangeDutyCycle(rightDutyCycle)
+    rightBac.ChangeDutyCycle(0)    
+
+def TurnLeft():
+    leftFor.ChangeDutyCycle(0)
+    leftBac.ChangeDutyCycle(0)
+    rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
 
-def Sonar(): # Eight Sonar 
-    global dataList, leftDutyCycle, rightDutyCycle
-    #dataList 3 to 10
-    leftDutyCycle = 50 + (dataList[7] - 50)
-    rightDutyCycle = 50 + (dataList[6] - 50)
-    
+def TurnRight():
+    leftFor.ChangeDutyCycle(leftDutyCycle)
+    leftBac.ChangeDutyCycle(0)
+    rightFor.ChangeDutyCycle(0)
+    rightBac.ChangeDutyCycle(0)
+        
 
 # Step/time parameters
 lasttime = time.time() # Variable to store time for timesteps
 step = 0
 previousStep = 0
 
-print("Starting")
+epsilon = 0.3
+EPSILON_END = 30000
+EPSILON_DECAY = epsilon/EPSILON_END
+if 0 <= t < EPSILON_END:
+    epsilon -= EPSILON_DECAY * t
+else:
+    epsilon = 0
+
+#Computational parameters
+alpha = 0.1    #"Forgetfulness" weight or learning rate.  The closer this is to 1 the more weight is given to recent samples.
+gamma = 0.9    #look-ahead weight or discount factor 0 considers new rewards only, 1 looks for long term rewards
+# Step/time parameters
+lasttime = time.time() # Variable to store time for timesteps
+step = 0
+previousStep = 0
+
+startT = t + 1 # Set starting itteration number based on info saved in log
+
+print("Start")
+print("setting up Serial")
 time.sleep(1)
+print("Getting Data")
+while noData == True:
+    Serial()
+print("DATA", dataList)
+s = getState() # s = index of state in states list
+
+while True:
+
+    Pause()
+    if pause == 1:
+        pass
+    else:
+        if  time.time() > lasttime + 0.075: # 0.05 = 75 millis = 13.3 Hertz - 50 milliseconds = 20 Hertz
+            lasttime = time.time()
+            step = time.time() - previousStep
+            previousStep = time.time()
+            if t % 5000 == 0:
+                DH.SaveData(t, Q)
+            while noData == True:
+                Stop()
+                Serial()
+            Serial()
+            LB = dataList[0]
+            FB = dataList[1]
+            RB = dataList[2]
+            if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
+                if Stopped == False:
+                    Stop()
+                    Stopped = True
+                    crashed = True
+                    DH.SaveData(t, Q) #  Lets take this time to save iterations and Q values.
+                    QLearn()
+                    #React to obstruction
+                    if LB == 0:
+                        SpinLeft()
+                        print("Left Hit")
+                    elif FB == 0:
+                        Reverse()
+                        print('Front Hit')
+                    elif RB == 0:
+                        SpinRight()
+                        print('Right Hit')
+                    time.sleep(.1)
+                    startT = t + 1
+                    s = getState()
+                    Stopped = False
+                    crashed = False
+                    
+            else:
+                t += 1
+                if epsilon > 0:
+                    epsilon -= EPSILON_DECAY # reduces to 0 over 10,000 steps
+                print("Time step = ", t)
+
+                if t > startT: # on the first time through the loop there will be no reward or previous states or actions
+                    QLearn()
+                a = getAction(s, epsilon)   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
+                #print("Action = ", a)
+                Act(a)
 
 while True:
 
@@ -126,27 +354,26 @@ while True:
         pass
     else:
         if  time.time() > lasttime + 0.1:#0.05 = 50 milliseconds = 20 Hertz
-                lasttime = time.time()
-                step = time.time() - previousStep
-                previousStep = time.time()
-                #print("Iteration time = ", round(step, 4))
-                while noData == True:
-                    Stop()
-                    Serial()
+            lasttime = time.time()
+            step = time.time() - previousStep
+            previousStep = time.time()
+            while noData == True:
+                Stop()
                 Serial()
-                LB = dataList[0]
-                FB = dataList[1]
-                RB = dataList[2]
-                if LB == 0:
-                    SpinLeft()
-                    print("Left Hit")
-                elif FB == 0:
-                    SpinRight()
-                    print('Front Hit')
-                elif RB == 0:
-                    SpinRight()
-                    print('Right Hit')
-                else:
-                    Sonar()
-                    print (f'Left Wheel ', {leftDutyCycle}, ', right Wheel ', {rightDutyCycle})
-                    Forward()
+            Serial()
+            LB = dataList[0]
+            FB = dataList[1]
+            RB = dataList[2]
+            if LB == 0:
+                SpinLeft()
+                print("Left Hit")
+            elif FB == 0:
+                SpinRight()
+                print('Front Hit')
+            elif RB == 0:
+                SpinRight()
+                print('Right Hit')
+            else:
+                Sonar()
+                print (f'Left Wheel ', {leftDutyCycle}, ', right Wheel ', {rightDutyCycle})
+                Forward()
