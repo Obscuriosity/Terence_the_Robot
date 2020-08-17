@@ -1,10 +1,11 @@
 '''
 Program for Terence with obstacle avoidance on which to build occupancy grid and SLAM experiments.
 28 07 20 created basic turn on the spot bumper program.
+17 08 20 adding gubbins for Q Tables to dictate reactions to sonar stimulus (obstacle avoidance).
 To Do -
 Braitenberg experiment with eight sonar
 integrate odometry with rotational PID
-Build map
+Build occupancy grid and map environment.
 '''
 # Import Stuff
 import RPi.GPIO as GPIO
@@ -98,14 +99,8 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
     except:
         print('no Connection')
         
-SHORT_DISTANCE = 15 # threshold in cm over which obstacles are ignored
-LONG_DISTANCE = 36 # threshold in cm over which obstacles are ignored
-short, long = false, false
-crashed = False
-
-        
 def SONAR(position): # Retrieve the state of individual Sonar
-    global dataList, SHORT_DISTANCE, LONG_DISTANCE
+    global dataList
     # Eight Sonar Script
     if position == 0:
         distance = dataList[3]
@@ -130,59 +125,82 @@ def SONAR(position): # Retrieve the state of individual Sonar
         
     if position == 7:
         distance = dataList[10]
-
-    # Return a state based on distance to objects.
-    if distance > SHORT_DISTANCE or distance < 1: # newPing returns distances over 100cm as 0
-        State = 0
-    if distance < SHORT_DISTANCE + 1 and distance > 0:
-        State = 1
-
-    if distance > LONG_DISTANCE or distance < 1: # newPing returns distances over 100cm as 0
-        State = 0
-    if distance < LONG_DISTANCE + 1 and distance > 0:
-        State = 1
         
-    return int(State)
- 
+    return int(distance)
+         
+SHORT_DISTANCE = 15 # threshold in cm over which obstacles are ignored
+LONG_DISTANCE = 36 # threshold in cm over which obstacles are ignored
+short, long = False, False
+crashed = False
+S = np.zeros(8)
+shortState = np.zeros(8)
+longState = np.zeros(4)
+    
 def getState(): # Returns state of the percieved world as a list i,e, distances from sonars and speed of wheels
-    global states, short, long
-    S1 = SONAR(0)  # read left sonar and get number from 0 or 1
-    S2 = SONAR(1)  # 
-    S3 = SONAR(2)  # 
-    S4 = SONAR(3)  # read left front sonar
-    S5 = SONAR(4)  # read right front sonar
-    S6 = SONAR(5)  # 
-    S7 = SONAR(6)  # 
-    S8 = SONAR(7)  # Read right most sonar
-    shortState = [S1, S2, S3, S4, S5, S6, S7, S8]
-    longState = [S1, S2, S3, S4]
-    ss = np.where((states == newState).all(axis=1))#
+    global shortStates, longStates, S, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long
+    S[0] = SONAR(0)  # read left sonar and get distance value
+    S[1] = SONAR(1)  # 
+    S[2] = SONAR(2)  # 
+    S[3] = SONAR(3)  # read left front sonar
+    S[4] = SONAR(4)  # read right front sonar
+    S[5] = SONAR(5)  # 
+    S[6] = SONAR(6)  # 
+    S[7] = SONAR(7)  # Read right most sonar
+    
+    # Convert sonar distance values into boolean for state lists
+    for x in range(0, 8):
+        if S[x] > SHORT_DISTANCE or S[x] < 1: # newPing returns distances over 100cm as 0
+            shortState[x] = 0
+        if S[x] < SHORT_DISTANCE + 1 and S[x] > 0:
+            shortState[x] = 1
+            
+    for y in range (0, 4):
+        num = y*2
+        if S[num] < LONG_DISTANCE or S[num+1] < LONG_DISTANCE:
+            longState[y] = 1
+        else:
+            longState[y] = 0
+            
+    ss = np.where((shortStates == shortState).all(axis=1))#
+    ls = np.where((longStates == longState).all(axis=1))#
+    if ss > 0:
+        short = True
+    elif ls > 0:
+        long = True
     #print ("New State = ", newState)
     #print ("State, s = ", s)
     return ss, ls                   # return list index to retieve data about state and action values (Q values)
 
-def getReward():
-    global dataList, crashed
+REWARD_LIST = np.array([-1, -2, -3, -4, -4, -3, -2, -1])
+
+def getReward(lesson):
+    global dataList, crashed, short, long
     r = 0
-    if a == 0:
-        r += -5
-    if a == 2:
-        r += -5
+    if ss > 0: 
+        reward = np.multiply(states[s], REWARD_LIST)
+        print('State Reward = ', reward)
+        r += np.sum(reward)
+    if a < 2 or a > 2: # if not going straight ahead
+        r -= 5
     if crashed == True:
-        r += -100
+        r -= 100
     print ("Reward = ", r)
     r = round(r, 2)
     return (r)
 
 def QLearn(lesson):
     global SQ, LQ, ss, ls, shortStates, longStates, alpha, gamma
-    if lesson == 0:
-        
+    if short == True:
+        newS = ss
+        Q = SQ
+        currentQ = Q[s,a]
+    elif long == True:
+        newS = ls
+        Q = LQ
     r = getReward() # get reward based on action and distance from obstacles
     print ("Old State = ", states[s])
-    newS = getState() # newS = index of state in states list
+    #newS = getState() # newS = index of state in states list
     max_future_Q = np.max(Q[newS]) # Get Q Value of optimum action.
-    currentQ = Q[s,a]
     print ("currentQ = ", currentQ)
     #newQ = (1 - alpha) * currentQ + alpha * (r + gamma * max_future_Q)  # got from https://pythonprogramming.net/q-learning-reinforcement-learning-python-tutorial/
     newQ = currentQ + alpha * (r + gamma * max_future_Q - currentQ) # Bellman equation, the heart of the Reinforcement Learning program
@@ -192,21 +210,29 @@ def QLearn(lesson):
     #print ("NewQ = ", newQ)
 
 # Number of Actions = 6 # drive forward at 50%, spin left, spin right, turn Left, turn Right or reverse.
-def getAction(s): # pass the s index of Q table and epsilon, to get maxQ make epsilon 1
-    global SQ, LQ, leftDutyCycle, rightDutyCycle, epsilon
-    if ss and ls == 0:
+def getAction(): # pass the s index of Q table and epsilon, to get maxQ make epsilon 1
+    global SQ, LQ, leftDutyCycle, rightDutyCycle, ss, ls, epsilon
+    randVal = 0
+    if short and long == False: # May remove this and only use getAction with learning/Q tables
         leftDutyCycle, rightDutyCycle = 100, 100
-        action = 0
+        action = 2
     else:
-        randVal = 0
         leftDutyCycle, rightDutyCycle = 50, 50
-        #Epsilon Greedy - if epsilon is below 1 there is a chance of a random allowed action being chosen (exploration)
+        #Epsilon Greedy - 
         randVal = random.randrange(1,101)
         if randVal <= (1-epsilon)*100:
-            action = np.argmax(Q[s])
+            if  short = True:
+                action = np.argmax(SQ[ss]) + 1 # moves 1, 2 and 3
+            elif long = True:
+                action = np.argmax(LQ[ls]) * 2 # moves 0, 2 and 4
         else:
             action = random.randrange(0,3)
-            print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon) 
+            print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
+            if  short = True:
+                action += 1 # adjust action for Act() function
+            elif long = True:
+                action *= 2
+        #
     return(action)  
 
   def Act(action):
@@ -259,12 +285,7 @@ def TurnRight():
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
     rightBac.ChangeDutyCycle(0)
-        
 
-# Step/time parameters
-lasttime = time.time() # Variable to store time for timesteps
-step = 0
-previousStep = 0
 
 epsilon = 0.3
 EPSILON_END = 30000
@@ -277,6 +298,7 @@ else:
 #Computational parameters
 alpha = 0.1    #"Forgetfulness" weight or learning rate.  The closer this is to 1 the more weight is given to recent samples.
 gamma = 0.9    #look-ahead weight or discount factor 0 considers new rewards only, 1 looks for long term rewards
+
 # Step/time parameters
 lasttime = time.time() # Variable to store time for timesteps
 step = 0
@@ -317,7 +339,6 @@ while True:
                     Stop()
                     Stopped = True
                     crashed = True
-                    DH.SaveData(t, Q) #  Lets take this time to save iterations and Q values.
                     QLearn()
                     #React to obstruction
                     if LB == 0:
@@ -339,41 +360,14 @@ while True:
                 t += 1
                 if epsilon > 0:
                     epsilon -= EPSILON_DECAY # reduces to 0 over 10,000 steps
-                print("Time step = ", t)
-
+                print("Iteration = ", t)
                 if t > startT: # on the first time through the loop there will be no reward or previous states or actions
-                    QLearn()
-                a = getAction(s, epsilon)   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
+                    get state
+                    if both states are 0
+                    do what you like - get action?
+                    else
+                    short or long 0 or 1
+                    QLearn(0 or 1)
+                a = getAction()   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
                 #print("Action = ", a)
                 Act(a)
-
-while True:
-
-    Pause()
-    if pause == 1:
-        pass
-    else:
-        if  time.time() > lasttime + 0.1:#0.05 = 50 milliseconds = 20 Hertz
-            lasttime = time.time()
-            step = time.time() - previousStep
-            previousStep = time.time()
-            while noData == True:
-                Stop()
-                Serial()
-            Serial()
-            LB = dataList[0]
-            FB = dataList[1]
-            RB = dataList[2]
-            if LB == 0:
-                SpinLeft()
-                print("Left Hit")
-            elif FB == 0:
-                SpinRight()
-                print('Front Hit')
-            elif RB == 0:
-                SpinRight()
-                print('Right Hit')
-            else:
-                Sonar()
-                print (f'Left Wheel ', {leftDutyCycle}, ', right Wheel ', {rightDutyCycle})
-                Forward()
