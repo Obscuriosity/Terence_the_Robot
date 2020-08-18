@@ -3,6 +3,8 @@ Program for Terence with obstacle avoidance on which to build occupancy grid and
 28 07 20 created basic turn on the spot bumper program.
 17 08 20 adding gubbins for Q Tables to dictate reactions to sonar stimulus (obstacle avoidance).
 To Do -
+need a way to stop QLearn adjusting q table for the last of a short state with the first subsequent long state and visa versa.
+bool shortLast longLast
 Braitenberg experiment with eight sonar
 integrate odometry with rotational PID
 Build occupancy grid and map environment.
@@ -151,12 +153,12 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     for x in range(0, 8):
         if S[x] > SHORT_DISTANCE or S[x] < 1: # newPing returns distances over 100cm as 0
             shortState[x] = 0
-        if S[x] < SHORT_DISTANCE + 1 and S[x] > 0:
+        else: # if S[x] < SHORT_DISTANCE + 1 and S[x] > 0:
             shortState[x] = 1
             
     for y in range (0, 4):
         num = y*2
-        if S[num] < LONG_DISTANCE or S[num+1] < LONG_DISTANCE:
+        if S[num] < LONG_DISTANCE and S[num] > 0 or S[num+1] < LONG_DISTANCE and S[num+1] > 0:
             longState[y] = 1
         else:
             longState[y] = 0
@@ -176,8 +178,8 @@ REWARD_LIST = np.array([-1, -2, -3, -4, -4, -3, -2, -1])
 def getReward(lesson):
     global dataList, crashed, short, long
     r = 0
-    if ss > 0: 
-        reward = np.multiply(states[s], REWARD_LIST)
+    if short == True: 
+        reward = np.multiply(shortStates[ss], REWARD_LIST)
         print('State Reward = ', reward)
         r += np.sum(reward)
     if a < 2 or a > 2: # if not going straight ahead
@@ -213,25 +215,21 @@ def QLearn(lesson):
 def getAction(): # pass the s index of Q table and epsilon, to get maxQ make epsilon 1
     global SQ, LQ, leftDutyCycle, rightDutyCycle, ss, ls, epsilon
     randVal = 0
-    if short and long == False: # May remove this and only use getAction with learning/Q tables
-        leftDutyCycle, rightDutyCycle = 100, 100
-        action = 2
+    leftDutyCycle, rightDutyCycle = 50, 50
+    #Epsilon Greedy - 
+    randVal = random.randrange(1,101)
+    if randVal <= (1-epsilon)*100:
+        if  short = True:
+            action = np.argmax(SQ[ss]) + 1 # moves 1, 2 and 3
+        elif long = True:
+            action = np.argmax(LQ[ls]) * 2 # moves 0, 2 and 4
     else:
-        leftDutyCycle, rightDutyCycle = 50, 50
-        #Epsilon Greedy - 
-        randVal = random.randrange(1,101)
-        if randVal <= (1-epsilon)*100:
-            if  short = True:
-                action = np.argmax(SQ[ss]) + 1 # moves 1, 2 and 3
-            elif long = True:
-                action = np.argmax(LQ[ls]) * 2 # moves 0, 2 and 4
-        else:
-            action = random.randrange(0,3)
-            print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
-            if  short = True:
-                action += 1 # adjust action for Act() function
-            elif long = True:
-                action *= 2
+        action = random.randrange(0,3)
+        print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
+        if  short = True:
+            action += 1 # adjust action for Act() function
+        elif long = True:
+            action *= 2
         #
     return(action)  
 
@@ -326,7 +324,7 @@ while True:
             step = time.time() - previousStep
             previousStep = time.time()
             if t % 5000 == 0:
-                DH.SaveData(t, Q)
+                DH.SaveData(t, SQ, LQ)
             while noData == True:
                 Stop()
                 Serial()
@@ -352,7 +350,7 @@ while True:
                         print('Right Hit')
                     time.sleep(.1)
                     startT = t + 1
-                    s = getState()
+                    getState()
                     Stopped = False
                     crashed = False
                     
@@ -361,13 +359,14 @@ while True:
                 if epsilon > 0:
                     epsilon -= EPSILON_DECAY # reduces to 0 over 10,000 steps
                 print("Iteration = ", t)
-                if t > startT: # on the first time through the loop there will be no reward or previous states or actions
-                    get state
-                    if both states are 0
+                getState()
+                if short and long == False:
+                    leftDutyCycle, rightDutyCycle = 100, 100
+                    a = 2
                     do what you like - get action?
-                    else
-                    short or long 0 or 1
-                    QLearn(0 or 1)
-                a = getAction()   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
+                else:
+                    if t > startT: # on the first time through the loop there will be no reward or previous states or actions
+                        QLearn()
+                        a = getAction()   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
                 #print("Action = ", a)
                 Act(a)
