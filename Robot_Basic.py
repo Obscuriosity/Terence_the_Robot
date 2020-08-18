@@ -166,9 +166,16 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     ss = np.where((shortStates == shortState).all(axis=1))#
     ls = np.where((longStates == longState).all(axis=1))#
     if ss > 0:
-        short = True
+        if short == False:
+            short = True
+            startT = t + 1
     elif ls > 0:
-        long = True
+        if long == False:
+            long = True
+            startT = t + 1
+    else:
+        short = False
+        long = False
     #print ("New State = ", newState)
     #print ("State, s = ", s)
     return ss, ls                   # return list index to retieve data about state and action values (Q values)
@@ -176,7 +183,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
 REWARD_LIST = np.array([-1, -2, -3, -4, -4, -3, -2, -1])
 
 def getReward(lesson):
-    global dataList, crashed, short, long
+    global dataList, crashed, shortStates, ss, short, long
     r = 0
     if short == True: 
         reward = np.multiply(shortStates[ss], REWARD_LIST)
@@ -195,7 +202,7 @@ def QLearn(lesson):
     if short == True:
         newS = ss
         Q = SQ
-        currentQ = Q[s,a]
+        currentQ = Q[ss,a]
     elif long == True:
         newS = ls
         Q = LQ
@@ -294,8 +301,8 @@ else:
     epsilon = 0
 
 #Computational parameters
-alpha = 0.1    #"Forgetfulness" weight or learning rate.  The closer this is to 1 the more weight is given to recent samples.
-gamma = 0.9    #look-ahead weight or discount factor 0 considers new rewards only, 1 looks for long term rewards
+alpha = 0.01    #"Forgetfulness" weight or learning rate.  The closer this is to 1 the more weight is given to recent samples.
+gamma = 0.99   #look-ahead weight or discount factor 0 considers new rewards only, 1 looks for long term rewards
 
 # Step/time parameters
 lasttime = time.time() # Variable to store time for timesteps
