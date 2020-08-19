@@ -162,23 +162,26 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
             longState[y] = 1
         else:
             longState[y] = 0
-            
+    
+    lastss = ss
+    lastls = ls
     ss = np.where((shortStates == shortState).all(axis=1))#
     ls = np.where((longStates == longState).all(axis=1))#
     if ss > 0:
         if short == False:
             short = True
-            startT = t + 1
+            startT = t
     elif ls > 0:
         if long == False:
             long = True
-            startT = t + 1
-    else:
+            startT = t
+    elif ss == 0:
         short = False
+    elif ls == 0:
         long = False
     #print ("New State = ", newState)
     #print ("State, s = ", s)
-    return ss, ls                   # return list index to retieve data about state and action values (Q values)
+    return ss, ls, lastss, lastls                   # return list index to retieve data about state and action values (Q values)
 
 REWARD_LIST = np.array([-1, -2, -3, -4, -4, -3, -2, -1])
 
@@ -198,24 +201,25 @@ def getReward(lesson):
     return (r)
 
 def QLearn(lesson):
-    global SQ, LQ, ss, ls, shortStates, longStates, alpha, gamma
+    global SQ, LQ, ss, ls, lastss, lastls, shortStates, longStates, alpha, gamma
     if short == True:
         newS = ss
         Q = SQ
-        currentQ = Q[ss,a]
+        currentQ = Q[lastss, a] # q[s,a] this is the value which needs updating based on the new staste index ss
     elif long == True:
         newS = ls
         Q = LQ
+        currentQ = Q[lastls, a]
     r = getReward() # get reward based on action and distance from obstacles
-    print ("Old State = ", states[s])
-    #newS = getState() # newS = index of state in states list
+    #print ("Old State = ", states[s])
+    #newS = getState() # newS has already been gotten outside the QLearn loop.
     max_future_Q = np.max(Q[newS]) # Get Q Value of optimum action.
-    print ("currentQ = ", currentQ)
+    #print ("currentQ = ", currentQ)
     #newQ = (1 - alpha) * currentQ + alpha * (r + gamma * max_future_Q)  # got from https://pythonprogramming.net/q-learning-reinforcement-learning-python-tutorial/
     newQ = currentQ + alpha * (r + gamma * max_future_Q - currentQ) # Bellman equation, the heart of the Reinforcement Learning program
     newQ = np.round(newQ, 2) # round down floats for a tidier Q Table
-    Q[s, a] = newQ
-    s = newS
+    currentQ = newQ
+    #s = newS
     #print ("NewQ = ", newQ)
 
 # Number of Actions = 6 # drive forward at 50%, spin left, spin right, turn Left, turn Right or reverse.
@@ -233,15 +237,16 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
     else:
         action = random.randrange(0,3)
         print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
-        if  short = True:
-            action += 1 # adjust action for Act() function
-        elif long = True:
-            action *= 2
         #
     return(action)  
 
-  def Act(action):
-    global leftDutyCycle, rightDutyCycle
+def Act(action):
+    global leftDutyCycle, rightDutyCycle, short, long
+    if  short = True:
+        action += 1 # 0, 1, 2 become 1, 2, 3
+    elif long = True:
+        action *= 2 # 0, 1, 2 become 0, 2, 4.
+        
     if action == 0: # Turn Left
         TurnLeft()
     if action == 1: # Spin Left
@@ -287,7 +292,7 @@ def TurnLeft():
 
 def TurnRight():
     leftFor.ChangeDutyCycle(leftDutyCycle)
-    leftBac.ChangeDutyCycle(0)
+    leftBac.ChangeDutyCycle(0)ss
     rightFor.ChangeDutyCycle(0)
     rightBac.ChangeDutyCycle(0)
 
@@ -356,24 +361,24 @@ while True:
                         SpinRight()
                         print('Right Hit')
                     time.sleep(.1)
-                    startT = t + 1
                     getState()
+                    startT = t + 1
                     Stopped = False
                     crashed = False
                     
-            else:
-                t += 1
-                if epsilon > 0:
-                    epsilon -= EPSILON_DECAY # reduces to 0 over 10,000 steps
-                print("Iteration = ", t)
+            else:           # Get State and if all is well, states < 1, act freely otherwise run QLearning loop
                 getState()
                 if short and long == False:
                     leftDutyCycle, rightDutyCycle = 100, 100
                     a = 2
-                    do what you like - get action?
-                else:
+                    # do what you like - get action?
+                else:       # QLearning loop if states are > 0
+                    t += 1
+                    if epsilon > 0:
+                        epsilon -= EPSILON_DECAY # reduces to 0 over 10,000 steps
+                    print("Iteration = ", t)
                     if t > startT: # on the first time through the loop there will be no reward or previous states or actions
                         QLearn()
-                        a = getAction()   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
+                    a = getAction()   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
                 #print("Action = ", a)
                 Act(a)
