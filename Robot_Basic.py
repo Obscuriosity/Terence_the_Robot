@@ -136,12 +136,12 @@ LONG_DISTANCE = 36 # threshold in cm over which obstacles are ignored
 short, long = False, False
 crashed = False
 S = np.zeros(8)
-ss, ls = 0, 0
+ss, ls, lastss, lastls = 0, 0, 0, 0
 shortState = np.zeros(8)
 longState = np.zeros(4)
     
 def getState(): # Returns state of the percieved world as a list i,e, distances from sonars and speed of wheels
-    global shortStates, longStates, S, ss, ls, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long
+    global shortStates, longStates, S, ss, ls, lastss, lastls, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long
     S[0] = SONAR(0)  # read left sonar and get distance value
     S[1] = SONAR(1)  # 
     S[2] = SONAR(2)  # 
@@ -164,20 +164,21 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
             longState[y] = 1
         else:
             longState[y] = 0
-    
+    print ('short state ', shortState)
+    print ('long state ', longState)
     lastss = ss
     lastls = ls
-    ss = np.where((shortStates == shortState).all(axis=1))#
-    ls = np.where((longStates == longState).all(axis=1))#
+    ss = np.argwhere((shortStates == shortState).all(axis=1))#
+    ls = np.argwhere((longStates == longState).all(axis=1))#
     print('ss and ls', ss, ',', ls)
     if ss > 0:
         if short == False:
             short = True
-            startT = t
+            startT = t + 1
     elif ls > 0:
         if long == False:
             long = True
-            startT = t
+            startT = t + 1
     elif ss == 0:
         short = False
     elif ls == 0:
@@ -188,7 +189,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
 
 REWARD_LIST = np.array([-1, -2, -3, -4, -4, -3, -2, -1])
 
-def getReward(lesson):
+def getReward():
     global dataList, crashed, shortStates, ss, short, long
     r = 0
     if short == True: 
@@ -201,8 +202,9 @@ def getReward(lesson):
     r = round(r, 2)
     return (r)
 
-def QLearn(lesson):
-    global SQ, LQ, ss, ls, lastss, lastls, shortStates, longStates, alpha, gamma
+def QLearn():
+    global SQ, LQ, ss, ls, lastss, lastls, shortStates, longStates, alpha, gamma, a
+    print('a ', a)
     if short == True:
         newS = ss
         Q = SQ
@@ -232,13 +234,13 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
     randVal = random.randrange(1,101)
     if randVal <= (1-epsilon)*100:
         if  short == True:
-            action = np.argmax(SQ[ss]) + 1 # moves 1, 2 and 3
+            action = np.argmax(SQ[ss]) # moves 1, 2 and 3
         elif long == True:
-            action = np.argmax(LQ[ls]) * 2 # moves 0, 2 and 4
+            action = np.argmax(LQ[ls]) # moves 0, 2 and 4
     else:
         action = random.randrange(0,3)
         print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
-        #
+    print('Action ', action)
     return(action)  
 
 def Act(action):
@@ -360,7 +362,7 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                    time.sleep(.1)
+                    time.sleep(.5)
                     getState()
                     startT = t + 1
                     Stopped = False
@@ -368,7 +370,7 @@ while True:
                     
             else:           # Get State and if all is well, states < 1, act freely otherwise run QLearning loop
                 getState()
-                if short and long == False:
+                if short == False and long == False:
                     leftDutyCycle, rightDutyCycle = 100, 100
                     a = 2
                     # do what you like - get action?
