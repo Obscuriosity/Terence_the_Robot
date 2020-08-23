@@ -136,11 +136,12 @@ LONG_DISTANCE = 36 # threshold in cm over which obstacles are ignored
 short, long = False, False
 crashed = False
 S = np.zeros(8)
+ss, ls = 0, 0
 shortState = np.zeros(8)
 longState = np.zeros(4)
     
 def getState(): # Returns state of the percieved world as a list i,e, distances from sonars and speed of wheels
-    global shortStates, longStates, S, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long
+    global shortStates, longStates, S, ss, ls, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long
     S[0] = SONAR(0)  # read left sonar and get distance value
     S[1] = SONAR(1)  # 
     S[2] = SONAR(2)  # 
@@ -323,7 +324,7 @@ print("Getting Data")
 while noData == True:
     Serial()
 print("DATA", dataList)
-s = getState() # s = index of state in states list
+# getState() # s = index of state in states list
 
 while True:
 
