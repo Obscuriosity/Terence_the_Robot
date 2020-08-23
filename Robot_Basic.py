@@ -16,7 +16,6 @@ import serial
 import math
 import random
 import numpy as np
-import QLDataHandling as DH
 import os.path
 import matplotlib.pyplot as plt
 import pickle
