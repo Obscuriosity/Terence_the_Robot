@@ -48,10 +48,10 @@ rightBac.start(rightDutyCycle)
 button = 4 # Pause Switch GPIO 4
 pause = 0  # Paused / Resume state
 
-SQ = DH.LoadQTable(0) # Load short range 256 state Q Table
-LQ =  DH.LoadQTable(1) # Load long range 16 state Q table
-shortStates = DH.LoadStatesList(0) # Load short 256 state list
-longStates = DH.LoadStatesList(1) # Load long 16 state list
+SQ = load(Q_Table_QL_256_Explore) # Load short range 256 state Q Table
+LQ = load(Q_Table_QL_16_Explore) # Load long range 16 state Q table
+shortStates = load(States_List_QL_256_Explore) # Load short 256 state list
+longStates = load(States_List_QL_16_Explore) # Load long 16 state list
 
 # Lets have a function to stop the motors
 Stopped = False
@@ -192,8 +192,6 @@ def getReward(lesson):
         reward = np.multiply(shortStates[ss], REWARD_LIST)
         print('State Reward = ', reward)
         r += np.sum(reward)
-    if a < 2 or a > 2: # if not going straight ahead
-        r -= 5
     if crashed == True:
         r -= 100
     print ("Reward = ", r)
@@ -335,8 +333,6 @@ while True:
             lasttime = time.time()
             step = time.time() - previousStep
             previousStep = time.time()
-            if t % 5000 == 0:
-                DH.SaveData(t, SQ, LQ)
             while noData == True:
                 Stop()
                 Serial()
