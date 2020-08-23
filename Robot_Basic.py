@@ -228,9 +228,9 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
     #Epsilon Greedy - 
     randVal = random.randrange(1,101)
     if randVal <= (1-epsilon)*100:
-        if  short = True:
+        if  short == True:
             action = np.argmax(SQ[ss]) + 1 # moves 1, 2 and 3
-        elif long = True:
+        elif long == True:
             action = np.argmax(LQ[ls]) * 2 # moves 0, 2 and 4
     else:
         action = random.randrange(0,3)
@@ -240,9 +240,9 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
 
 def Act(action):
     global leftDutyCycle, rightDutyCycle, short, long
-    if  short = True:
+    if  short == True:
         action += 1 # 0, 1, 2 become 1, 2, 3
-    elif long = True:
+    elif long == True:
         action *= 2 # 0, 1, 2 become 0, 2, 4.
         
     if action == 0: # Turn Left
