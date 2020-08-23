@@ -16,6 +16,8 @@ import serial
 import math
 import random
 import numpy as np
+from numpy import save
+from numpy import load
 import os.path
 import matplotlib.pyplot as plt
 import pickle
