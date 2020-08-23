@@ -295,9 +295,10 @@ def TurnRight():
     rightFor.ChangeDutyCycle(0)
     rightBac.ChangeDutyCycle(0)
 
-
+t = 0
+    
 epsilon = 0.3
-EPSILON_END = 30000
+EPSILON_END = 1
 EPSILON_DECAY = epsilon/EPSILON_END
 if 0 <= t < EPSILON_END:
     epsilon -= EPSILON_DECAY * t
@@ -353,7 +354,7 @@ while True:
                         print("Left Hit")
                     elif FB == 0:
                         Reverse()
-                        print('Front Hit')
+                        print('Front Hit')30000
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
