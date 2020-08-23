@@ -131,8 +131,8 @@ def SONAR(position): # Retrieve the state of individual Sonar
         
     return int(distance)
          
-SHORT_DISTANCE = 15 # threshold in cm over which obstacles are ignored
-LONG_DISTANCE = 36 # threshold in cm over which obstacles are ignored
+SHORT_DISTANCE = 9 # threshold in cm over which obstacles are ignored
+LONG_DISTANCE = 27 # threshold in cm over which obstacles are ignored
 short, long = False, False
 crashed = False
 S = np.zeros(8)
@@ -171,6 +171,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     ss = np.argwhere((shortStates == shortState).all(axis=1))#
     ls = np.argwhere((longStates == longState).all(axis=1))#
     print('ss and ls', ss, ',', ls)
+    #
     if ss > 0:
         if short == False:
             short = True
@@ -179,9 +180,9 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
         if long == False:
             long = True
             startT = t + 1
-    elif ss == 0:
+    if ss == 0:
         short = False
-    elif ls == 0:
+    if ls == 0:
         long = False
     #print ("New State = ", newState)
     #print ("State, s = ", s)
@@ -244,7 +245,7 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
     return(action)  
 
 def Act(action):
-    global leftDutyCycle, rightDutyCycle, short, long
+    global short, long
     if  short == True:
         action += 1 # 0, 1, 2 become 1, 2, 3
     elif long == True:
@@ -335,7 +336,7 @@ while True:
     if pause == 1:
         pass
     else:
-        if  time.time() > lasttime + 0.075: # 0.05 = 75 millis = 13.3 Hertz - 50 milliseconds = 20 Hertz
+        if  time.time() > lasttime + 0.1: # 0.05 = 75 millis = 13.3 Hertz - 50 milliseconds = 20 Hertz
             lasttime = time.time()
             step = time.time() - previousStep
             previousStep = time.time()
@@ -351,8 +352,10 @@ while True:
                     Stop()
                     Stopped = True
                     crashed = True
-                    QLearn()
+                    if short or long:
+                        QLearn()
                     #React to obstruction
+                    leftDutyCycle, rightDutyCycle = 50, 50
                     if LB == 0:
                         SpinLeft()
                         print("Left Hit")
@@ -362,7 +365,7 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                    time.sleep(.5)
+                    time.sleep(.1)
                     getState()
                     startT = t + 1
                     Stopped = False
@@ -370,7 +373,12 @@ while True:
                     
             else:           # Get State and if all is well, states < 1, act freely otherwise run QLearning loop
                 getState()
+                if short == True:
+                    print ('SHOOOOORT')
+                if long == True:
+                    print ('LOOOOOOOONG')
                 if short == False and long == False:
+                    print('FREEEEEEEEEEEEEEEEEEEEEEEEE')
                     leftDutyCycle, rightDutyCycle = 100, 100
                     a = 2
                     # do what you like - get action?
