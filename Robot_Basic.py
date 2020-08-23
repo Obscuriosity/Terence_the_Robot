@@ -354,7 +354,7 @@ while True:
                         print("Left Hit")
                     elif FB == 0:
                         Reverse()
-                        print('Front Hit')30000
+                        print('Front Hit')
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
