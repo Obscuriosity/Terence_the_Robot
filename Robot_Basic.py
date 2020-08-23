@@ -169,6 +169,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     lastls = ls
     ss = np.where((shortStates == shortState).all(axis=1))#
     ls = np.where((longStates == longState).all(axis=1))#
+    print('ss and ls', ss, ',', ls)
     if ss > 0:
         if short == False:
             short = True
