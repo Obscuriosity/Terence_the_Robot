@@ -290,7 +290,7 @@ def TurnLeft():
 
 def TurnRight():
     leftFor.ChangeDutyCycle(leftDutyCycle)
-    leftBac.ChangeDutyCycle(0)ss
+    leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
     rightBac.ChangeDutyCycle(0)
 
