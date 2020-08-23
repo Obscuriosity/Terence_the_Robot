@@ -49,10 +49,10 @@ rightBac.start(rightDutyCycle)
 button = 4 # Pause Switch GPIO 4
 pause = 0  # Paused / Resume state
 
-SQ = load(Q_Table_QL_256_Explore) # Load short range 256 state Q Table
-LQ = load(Q_Table_QL_16_Explore) # Load long range 16 state Q table
-shortStates = load(States_List_QL_256_Explore) # Load short 256 state list
-longStates = load(States_List_QL_16_Explore) # Load long 16 state list
+SQ = load('Q_Table_QL_256_Explore') # Load short range 256 state Q Table
+LQ = load('Q_Table_QL_16_Explore') # Load long range 16 state Q table
+shortStates = load('States_List_QL_256_Explore') # Load short 256 state list
+longStates = load('States_List_QL_16_Explore') # Load long 16 state list
 
 # Lets have a function to stop the motors
 Stopped = False
