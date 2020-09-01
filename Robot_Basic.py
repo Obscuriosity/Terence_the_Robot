@@ -150,7 +150,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     S[5] = SONAR(5)  # 
     S[6] = SONAR(6)  # 
     S[7] = SONAR(7)  # Read right most sonar
-    
+    print(s)
     # Convert sonar distance values into boolean for state lists
     for x in range(0, 8):
         if S[x] > SHORT_DISTANCE or S[x] < 1: # newPing returns distances over 100cm as 0
@@ -164,7 +164,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
             longState[y] = 1
         else:
             longState[y] = 0
-    print ('short state ', shortState)
+    #print ('short state ', shortState)
     #print ('long state ', longState)
     lastss = ss
     lastls = ls
@@ -195,7 +195,7 @@ def getReward():
     r = 0
     if short == True: 
         reward = np.multiply(shortStates[ss], REWARD_LIST)
-        print('State Reward = ', reward)
+        #print('State Reward = ', reward)
         r += np.sum(reward)
     if crashed == True:
         r -= 100
