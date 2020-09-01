@@ -376,8 +376,10 @@ while True:
                 getState()
                 if short == True:
                     #print ('SHOOOOORT')
+                    pass
                 if long == True:
                     #print ('LOOOOOOOONG')
+                    pass
                 if short == False and long == False:
                     #print('FREEEEEEEEEEEEEEEEEEEEEEEEE')
                     leftDutyCycle, rightDutyCycle = 100, 100
