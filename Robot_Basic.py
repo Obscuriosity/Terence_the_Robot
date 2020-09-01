@@ -165,12 +165,12 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
         else:
             longState[y] = 0
     print ('short state ', shortState)
-    print ('long state ', longState)
+    #print ('long state ', longState)
     lastss = ss
     lastls = ls
     ss = np.argwhere((shortStates == shortState).all(axis=1))#
     ls = np.argwhere((longStates == longState).all(axis=1))#
-    print('ss and ls', ss, ',', ls)
+    #print('ss and ls', ss, ',', ls)
     #
     if ss > 0:
         if short == False:
@@ -199,13 +199,13 @@ def getReward():
         r += np.sum(reward)
     if crashed == True:
         r -= 100
-    print ("Reward = ", r)
+    #print ("Reward = ", r)
     r = round(r, 2)
     return (r)
 
 def QLearn():
     global SQ, LQ, ss, ls, lastss, lastls, shortStates, longStates, alpha, gamma, a
-    print('a ', a)
+    #print('a ', a)
     if short == True:
         newS = ss
         Q = SQ
@@ -228,9 +228,8 @@ def QLearn():
 
 # Number of Actions = 6 # drive forward at 50%, spin left, spin right, turn Left, turn Right or reverse.
 def getAction(): # pass the s index of Q table and epsilon, to get maxQ make epsilon 1
-    global SQ, LQ, leftDutyCycle, rightDutyCycle, ss, ls, epsilon
+    global SQ, LQ, ss, ls, epsilon
     randVal = 0
-    leftDutyCycle, rightDutyCycle = 50, 50
     #Epsilon Greedy - 
     randVal = random.randrange(1,101)
     if randVal <= (1-epsilon)*100:
@@ -240,16 +239,18 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
             action = np.argmax(LQ[ls]) # moves 0, 2 and 4
     else:
         action = random.randrange(0,3)
-        print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
-    print('Action ', action)
+        #print("Random Action = ", action, ", Random Value = ", randVal, ", Epsilon = ", epsilon)
+    #print('Action ', action)
     return(action)  
 
 def Act(action):
     global short, long
     if  short == True:
         action += 1 # 0, 1, 2 become 1, 2, 3
+        leftDutyCycle, rightDutyCycle = 50, 50
     elif long == True:
         action *= 2 # 0, 1, 2 become 0, 2, 4.
+        leftDutyCycle, rightDutyCycle = 75, 75
         
     if action == 0: # Turn Left
         TurnLeft()
@@ -374,11 +375,11 @@ while True:
             else:           # Get State and if all is well, states < 1, act freely otherwise run QLearning loop
                 getState()
                 if short == True:
-                    print ('SHOOOOORT')
+                    #print ('SHOOOOORT')
                 if long == True:
-                    print ('LOOOOOOOONG')
+                    #print ('LOOOOOOOONG')
                 if short == False and long == False:
-                    print('FREEEEEEEEEEEEEEEEEEEEEEEEE')
+                    #print('FREEEEEEEEEEEEEEEEEEEEEEEEE')
                     leftDutyCycle, rightDutyCycle = 100, 100
                     a = 2
                     # do what you like - get action?
@@ -386,7 +387,7 @@ while True:
                     t += 1
                     if epsilon > 0:
                         epsilon -= EPSILON_DECAY # reduces to 0 over 10,000 steps
-                    print("Iteration = ", t)
+                    #print("Iteration = ", t)
                     if t > startT: # on the first time through the loop there will be no reward or previous states or actions
                         QLearn()
                     a = getAction()   # getAction will find an action based on the index s in the Q list and exploration will be based on epsilon
