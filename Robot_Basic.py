@@ -150,7 +150,7 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     S[5] = SONAR(5)  # 
     S[6] = SONAR(6)  # 
     S[7] = SONAR(7)  # Read right most sonar
-    print(s)
+    print(S)
     # Convert sonar distance values into boolean for state lists
     for x in range(0, 8):
         if S[x] > SHORT_DISTANCE or S[x] < 1: # newPing returns distances over 100cm as 0
