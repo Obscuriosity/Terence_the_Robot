@@ -244,7 +244,7 @@ def getAction(): # pass the s index of Q table and epsilon, to get maxQ make eps
     return(action)  
 
 def Act(action):
-    global short, long
+    global short, long, leftDutyCycle, rightDutyCycle
     if  short == True:
         action += 1 # 0, 1, 2 become 1, 2, 3
         leftDutyCycle, rightDutyCycle = 50, 50
