@@ -66,12 +66,13 @@ def Stop():
     rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def Pause(): # Pause routine, Uses sleep
-    global pause
+    global pause, stateFeed
     if GPIO.input(button) == 1:
         time.sleep(.3)
         if pause == 0:
             pause = 1
             Stop()
+            save((f'StateFeed_{t}.npy'), stateFeed)
             print("Paused")
         elif pause == 1:
             pause = 0
@@ -139,9 +140,12 @@ S = np.zeros(8)
 ss, ls, lastss, lastls = 0, 0, 0, 0
 shortState = np.zeros(8)
 longState = np.zeros(4)
+# Added to collect NN Data
+stateFeed = np.zeros(8)
+
     
 def getState(): # Returns state of the percieved world as a list i,e, distances from sonars and speed of wheels
-    global shortStates, longStates, S, ss, ls, lastss, lastls, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long
+    global shortStates, longStates, S, ss, ls, lastss, lastls, shortState, longState, SHORT_DISTANCE, LONG_DISTANCE, short, long, stateFeed
     S[0] = SONAR(0)  # read left sonar and get distance value
     S[1] = SONAR(1)  # 
     S[2] = SONAR(2)  # 
@@ -168,8 +172,10 @@ def getState(): # Returns state of the percieved world as a list i,e, distances 
     #print ('long state ', longState)
     lastss = ss
     lastls = ls
+    #print(longState)
     ss = np.argwhere((shortStates == shortState).all(axis=1))#
     ls = np.argwhere((longStates == longState).all(axis=1))#
+    stateFeed = np.append(stateFeed, S)
     #print('ss and ls', ss, ',', ls)
     #
     if ss > 0:
