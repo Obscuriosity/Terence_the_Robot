@@ -4,8 +4,8 @@ Program for Terence with obstacle avoidance on which to build occupancy grid and
 17 08 20 adding gubbins for Q Tables to dictate reactions to sonar stimulus (obstacle avoidance).
 To Do -
 need a way to stop QLearn adjusting q table for the last of a short state with the first subsequent long state and visa versa.
-bool shortLast longLast
-Braitenberg experiment with eight sonar
+bool shortLast longLast - sorted.
+try making DutyCycle/speed = 50 + smallest distance to obstacle (1 to 50cm).
 integrate odometry with rotational PID
 Build occupancy grid and map environment.
 '''
