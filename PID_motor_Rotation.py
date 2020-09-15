@@ -6,6 +6,7 @@ program to further test simple pid with rotation. Based on PID_motor
 import RPi.GPIO as GPIO
 import time
 import serial
+import math
 from simple_pid import PID
 import matplotlib.pyplot as plt
 
@@ -167,6 +168,46 @@ rightMotor_PID.output_limits = (0, 100)
 prev_leftEnc = 0
 prev_rightEnc = 0
 
+#Rotational PID will need some odoemtry in order to work out rotation
+travel, TotalTravel, thetaRad, theta = 0, 0, 0, 0
+botX, botY = 0, 0
+
+def Odometry():
+    wheelbase = 198
+    wheelRadius = 41.5
+    CPR = 990  # Clicks per Rotation
+    wheelc = 2*wheelRadius*math.pi
+    mmPC = wheelc/CPR # milimetres per count
+    #print(wheelc, mmPC)
+    global travel, TotalTravel, thetaRad, theta # theta is direction in which bot is pointing
+    global botX, botY
+    global Rcount, Lcount
+    global PrevLeftFor, PrevLeftBac, PrevRightFor, PrevRightBac
+    global dataList
+    if len(dataList) > 0:
+        leftFor = dataList[3]
+        leftBac = dataList[4]
+        rightFor = dataList[5]
+        rightBac = dataList[6]
+        #print("Right - ", rightFor)
+        Lcount = (leftFor - PrevLeftFor) - (leftBac - PrevLeftBac)
+        Rcount = (rightFor - PrevRightFor) - (rightBac - PrevRightBac)
+        PrevLeftFor = leftFor
+        PrevLeftBac = leftBac
+        PrevRightFor = rightFor
+        PrevRightBac = rightBac
+        #print(leftFor, PrevLeftFor)
+        leftTravel = Lcount * mmPC
+        rightTravel = Rcount * mmPC
+        travel = (leftTravel + rightTravel)/2
+        TotalTravel += travel
+        thetaRad += (leftTravel - rightTravel)/wheelbase
+        theta = thetaRad*(180/math.pi) #convert to heading in degrees;
+        #theta -= (theta/360) * 360 # clip theta to plus or minus 360 degrees
+        botX += travel * math.sin(thetaRad);
+        botY += travel * math.cos(thetaRad);
+        print(int(botX), int(botY), int(theta))
+
 while True:
 
     Pause()
@@ -183,6 +224,7 @@ while True:
                 Stop()
                 Serial()
             Serial()
+            # Proprioception
             LB = dataList[0]
             FB = dataList[1]
             RB = dataList[2]
@@ -193,8 +235,10 @@ while True:
             prev_leftEnc = leftEnc
             prev_rightEnc = rightEnc
             print(leftTicks, ' Left Ticks | Right Ticks ', rightTicks)
+            # PID pass commands to motors
             leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
             rightMotor_PID.setpoint = RTPI
+            # add some data to a dictionary
             PID_data['t'].append(t)
             PID_data['LT'].append(leftTicks)
             PID_data['RT'].append(rightTicks)
@@ -211,3 +255,12 @@ while True:
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
                 Forward()
+
+                '''
+                time
+                Serial
+                Sensors
+                odometry
+                
+                PID - 
+                '''
