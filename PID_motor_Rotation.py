@@ -159,14 +159,20 @@ LTPI, RTPI = 50, 50 # Ticks per Interval, initial setpoint
 tunings = (1.0, 0.5, 0.05) # Default
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
+rotational_PID
 leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
+rotational_PID.tunings = tunungs
 leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
 rightMotor_PID.sample_time = 0.01
-leftMotor_PID.output_limits = (0, 100)    # output value will be between 0 and 100
-rightMotor_PID.output_limits = (0, 100)
-prev_leftEnc = 0
-prev_rightEnc = 0
+rotational_PID.sample_time = 0.01
+leftMotor_PID.output_limits = (-100, 100)    # output value (Duty Cycle)
+rightMotor_PID.output_limits = (-100, 100)
+rotational_PID.output_limits = (-100, 100)
+
+# Odometry variables
+prev_leftEncF, prev_leftEncB = 0, 0
+prev_rightEncF, prev_rightEncB = 0, 0
 
 #Rotational PID will need some odoemtry in order to work out rotation
 travel, TotalTravel, thetaRad, theta = 0, 0, 0, 0
@@ -181,32 +187,31 @@ def Odometry():
     #print(wheelc, mmPC)
     global travel, TotalTravel, thetaRad, theta # theta is direction in which bot is pointing
     global botX, botY
-    global Rcount, Lcount
-    global PrevLeftFor, PrevLeftBac, PrevRightFor, PrevRightBac
+    global leftTicks, rightTicks
     global dataList
-    if len(dataList) > 0:
-        leftFor = dataList[3]
-        leftBac = dataList[4]
-        rightFor = dataList[5]
-        rightBac = dataList[6]
-        #print("Right - ", rightFor)
-        Lcount = (leftFor - PrevLeftFor) - (leftBac - PrevLeftBac)
-        Rcount = (rightFor - PrevRightFor) - (rightBac - PrevRightBac)
-        PrevLeftFor = leftFor
-        PrevLeftBac = leftBac
-        PrevRightFor = rightFor
-        PrevRightBac = rightBac
-        #print(leftFor, PrevLeftFor)
-        leftTravel = Lcount * mmPC
-        rightTravel = Rcount * mmPC
-        travel = (leftTravel + rightTravel)/2
-        TotalTravel += travel
-        thetaRad += (leftTravel - rightTravel)/wheelbase
-        theta = thetaRad*(180/math.pi) #convert to heading in degrees;
-        #theta -= (theta/360) * 360 # clip theta to plus or minus 360 degrees
-        botX += travel * math.sin(thetaRad);
-        botY += travel * math.cos(thetaRad);
-        print(int(botX), int(botY), int(theta))
+    global prev_leftEncF, prev_leftEncB, prev_rightEncF, prev_rightEncB
+    leftEncF = dataList[11]
+    leftEncB = dataList[12]
+    rightEncF = dataList[13]
+    rightEncB = dataList[14]
+    leftTicks = (leftEncF - prev_leftEncF) - (leftEncB - prev_leftEncB)
+    rightTicks = (rightEncF - prev_rightEncF) - (rightEncB = prev_rightEncB)
+    prev_leftEncF = leftEncF
+    prev_leftEncB = leftEncB
+    prev_rightEncF = rightEncF
+    prev_rightEncB = rightEncB
+    print(leftTicks, ' Left Ticks | Right Ticks ', rightTicks)
+
+    leftTravel = leftTicks * mmPC
+    rightTravel = rightTicks * mmPC
+    travel = (leftTravel + rightTravel)/2
+    TotalTravel += travel
+    thetaRad += (leftTravel - rightTravel)/wheelbase
+    theta = thetaRad*(180/math.pi) #convert to heading in degrees;
+    #theta -= (theta/360) * 360 # clip theta to plus or minus 360 degrees
+    botX += travel * math.sin(thetaRad);
+    botY += travel * math.cos(thetaRad);
+    print(int(botX), int(botY), int(theta))
 
 while True:
 
@@ -224,27 +229,11 @@ while True:
                 Stop()
                 Serial()
             Serial()
-            # Proprioception
+            Odometry()
+            # Check Bumpers
             LB = dataList[0]
             FB = dataList[1]
             RB = dataList[2]
-            leftEnc = dataList[11]
-            rightEnc = dataList[13]
-            leftTicks = leftEnc - prev_leftEnc
-            rightTicks = rightEnc - prev_rightEnc
-            prev_leftEnc = leftEnc
-            prev_rightEnc = rightEnc
-            print(leftTicks, ' Left Ticks | Right Ticks ', rightTicks)
-            # PID pass commands to motors
-            leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
-            rightMotor_PID.setpoint = RTPI
-            # add some data to a dictionary
-            PID_data['t'].append(t)
-            PID_data['LT'].append(leftTicks)
-            PID_data['RT'].append(rightTicks)
-            PID_data['LDC'].append(leftDutyCycle)
-            PID_data['RDC'].append(rightDutyCycle)
-            
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
                     Stop()
@@ -252,15 +241,34 @@ while True:
                     Stopped = True                    
             else:
                 Stopped = False
+                # PID pass commands to motors
+                leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
+                rightMotor_PID.setpoint = RTPI
+                ''' Work out something here
+                = leftMotor_PID(leftTicks)
+                = rightMotor_PID(rightTicks)
+                leftDutyCycle = 
+                rightDutyCycle =
+                '''
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
+                
+                #Act
                 Forward()
+                
+                # add some data to a dictionary
+                PID_data['t'].append(t)
+                PID_data['LT'].append(leftTicks)
+                PID_data['RT'].append(rightTicks)
+                PID_data['LDC'].append(leftDutyCycle)
+                PID_data['RDC'].append(rightDutyCycle)
 
                 '''
                 time
-                Serial
-                Sensors
-                odometry
-                
-                PID - 
+                Serial - info from arduino - Get State
+                odometry - where t f are we - Get state
+                Sensors - react to bumps etc - Vehicle 1
+                Decisions/Thinkin - Policy
+                PID - motor control - Act
+                Reward?
                 '''
