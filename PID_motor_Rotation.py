@@ -255,7 +255,8 @@ while True:
                 rightDutyCycle = rightMotor_PID(rightTicks)
                 '''
                 # Work out something here
-                rotation = rotational_PID(theta)
+                rotationError = bearing - theta
+                rotation = rotational_PID(rotationError)
                 leftMotor_PID.setpoint = velocity + rotation # formerly LTPI
                 rightMotor_PID.setpoint = velocity - rotation # fromerly RTPI
                 leftDutyCycle = leftMotor_PID(leftTicks)
@@ -264,13 +265,13 @@ while True:
                 # Minus values move the wheels backwards and positive values forward.
                 if leftDutyCycle < 0:
                     leftFor.ChangeDutyCycle(0)
-                    leftBac.ChangeDutyCycle(leftDutyCycle)
+                    leftBac.ChangeDutyCycle(-leftDutyCycle)
                 else:
                     leftFor.ChangeDutyCycle(leftDutyCycle)
                     leftBac.ChangeDutyCycle(0)
                 if rightDutyCycle < 0:
                     rightFor.ChangeDutyCycle(0)
-                    rightBac.ChangeDutyCycle(rightDutyCycle)
+                    rightBac.ChangeDutyCycle(-rightDutyCycle)
                 else:
                     rightFor.ChangeDutyCycle(rightDutyCycle)
                     rightBac.ChangeDutyCycle(0)
