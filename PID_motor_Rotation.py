@@ -151,8 +151,13 @@ while noData == True:
     Serial()
 print("DATA", dataList)
 
+# Movement variables
+velocity = 50
+bearing = 0
+rotation = 0
+
 # PID Gubbins
-LTPI, RTPI = 50, 50 # Ticks per Interval, initial setpoint
+LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
 #tunings = (2, 1.0, 0.01) # Fast but permissibly erratic
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
@@ -243,20 +248,36 @@ while True:
             else:
                 Stopped = False
                 # PID pass commands to motors
+                '''
                 leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
                 rightMotor_PID.setpoint = RTPI
-                ''' Work out something here
-                = leftMotor_PID(leftTicks)
-                = rightMotor_PID(rightTicks)
-                leftDutyCycle = 
-                rightDutyCycle =
-                '''
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
+                '''
+                # Work out something here
+                rotation = rotational_PID(theta)
+                leftMotor_PID.setpoint = velocity + rotation # formerly LTPI
+                rightMotor_PID.setpoint = velocity - rotation # fromerly RTPI
+                leftDutyCycle = leftMotor_PID(leftTicks)
+                rightDutyCycle = rightMotor_PID(rightTicks)
+                # Move the motors
+                # Minus values move the wheels backwards and positive values forward.
+                if leftDutyCycle < 0:
+                    leftFor.ChangeDutyCycle(0)
+                    leftBac.ChangeDutyCycle(leftDutyCycle)
+                else:
+                    leftFor.ChangeDutyCycle(leftDutyCycle)
+                    leftBac.ChangeDutyCycle(0)
+                if rightDutyCycle < 0:
+                    rightFor.ChangeDutyCycle(0)
+                    rightBac.ChangeDutyCycle(rightDutyCycle)
+                else:
+                    rightFor.ChangeDutyCycle(rightDutyCycle)
+                    rightBac.ChangeDutyCycle(0)
                 
                 #Act
                 Forward()
-                
+                theta
                 # add some data to a dictionary
                 PID_data['t'].append(t)
                 PID_data['LT'].append(leftTicks)
