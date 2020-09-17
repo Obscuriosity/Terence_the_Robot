@@ -264,6 +264,7 @@ while True:
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation # formerly LTPI
                 rightMotor_PID.setpoint = velocity + rotation # fromerly RTPI
+                print(leftMotor_PID.setpoint, ' Setpoints ', rightMotor_PID.setpoint)
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
                 print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
