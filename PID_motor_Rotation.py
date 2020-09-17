@@ -163,12 +163,13 @@ LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
 tunings = (1.0, 0.5, 0.05) # Default
+rotationalTunings = (0.7, 0.4, 0.05)
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
 leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
-rotational_PID.tunings = tunings
+rotational_PID.tunings = rotationalTunings
 leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
 rightMotor_PID.sample_time = 0.01
 rotational_PID.sample_time = 0.01
