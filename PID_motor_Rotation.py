@@ -17,7 +17,7 @@ bot.flush()
 # Set up motors and GPIO pins
 GPIO.setmode(GPIO.BCM) # Use Broadcom pin numbering
 GPIO.setwarnings(False)
-GPIO.setup(22, GPIO.OUT) # Left Motor Forward
+GPIO.set(0.7, 0.4, 0.05)up(22, GPIO.OUT) # Left Motor Forward
 GPIO.setup(23, GPIO.OUT) # Left Motor Backward
 GPIO.setup(27, GPIO.OUT) # Right Motor Forward
 GPIO.setup(18, GPIO.OUT) # Right Motor Backward
@@ -163,7 +163,7 @@ LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
 tunings = (1.0, 0.5, 0.05) # Default
-rotationalTunings = (1.3, 0.6, 0.05)
+rotationalTunings = (1.1, 0.6, 0.05)
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
