@@ -159,7 +159,7 @@ LTPI, RTPI = 50, 50 # Ticks per Interval, initial setpoint
 tunings = (1.0, 0.5, 0.05) # Default
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
-rotational_PID
+rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
 leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
 rotational_PID.tunings = tunungs
