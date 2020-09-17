@@ -194,6 +194,7 @@ def Odometry():
     leftEncB = dataList[12]
     rightEncF = dataList[13]
     rightEncB = dataList[14]
+    # Update wheel Ticks
     leftTicks = (leftEncF - prev_leftEncF) - (leftEncB - prev_leftEncB)
     rightTicks = (rightEncF - prev_rightEncF) - (rightEncB - prev_rightEncB)
     prev_leftEncF = leftEncF
@@ -201,7 +202,7 @@ def Odometry():
     prev_rightEncF = rightEncF
     prev_rightEncB = rightEncB
     print(leftTicks, ' Left Ticks | Right Ticks ', rightTicks)
-
+    # Update x y and Theta
     leftTravel = leftTicks * mmPC
     rightTravel = rightTicks * mmPC
     travel = (leftTravel + rightTravel)/2
@@ -268,7 +269,7 @@ while True:
                 Serial - info from arduino - Get State
                 odometry - where t f are we - Get state
                 Sensors - react to bumps etc - Vehicle 1
-                Decisions/Thinkin - Policy
+                Decisions/Thinking - Policy
                 PID - motor control - Act
                 Reward?
                 '''
