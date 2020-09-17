@@ -257,9 +257,7 @@ while True:
                 '''
                 # Work out something here
                 rotationError = bearing - theta
-                if rotationError > rotationAccuracy:
-                    pass
-                else:
+                if -rotationAccuracy < rotationError < rotationAccuracy:
                     rotationError = 0
                 print('Rotation Error = ', rotationError)
                 rotation = rotational_PID(rotationError)
