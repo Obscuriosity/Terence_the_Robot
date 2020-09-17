@@ -261,6 +261,7 @@ while True:
                 rightMotor_PID.setpoint = velocity - rotation # fromerly RTPI
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
+                print(leftDutyCYcle, ' Duty Cycles ', rightDutyCycle)
                 # Move the motors
                 # Minus values move the wheels backwards and positive values forward.
                 if leftDutyCycle < 0:
