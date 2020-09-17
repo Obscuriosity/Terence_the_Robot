@@ -162,7 +162,7 @@ rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
 leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
-rotational_PID.tunings = tunungs
+rotational_PID.tunings = tunings
 leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
 rightMotor_PID.sample_time = 0.01
 rotational_PID.sample_time = 0.01
