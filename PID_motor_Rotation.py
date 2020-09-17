@@ -163,7 +163,7 @@ LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
 tunings = (1.0, 0.5, 0.05) # Default
-rotationalTunings = (1.1, 0.6, 0.05)
+rotationalTunings = (1.1, 0.8, 0.05)
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
