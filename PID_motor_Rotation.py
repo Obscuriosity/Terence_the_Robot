@@ -110,7 +110,7 @@ def Forward():
 def Reverse():
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(leftDutyCycle)
-    rightFor.ChangeDutyCycle(0)
+    rightFor.ChangeDutyCycle(0)3
     rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
@@ -153,7 +153,7 @@ print("DATA", dataList)
 
 # Movement variables
 velocity = 0
-bearing = 180
+bearing = 360
 rotation = 0
 rotationAccuracy = 2
 
