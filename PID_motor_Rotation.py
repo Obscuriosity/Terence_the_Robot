@@ -110,7 +110,7 @@ def Forward():
 def Reverse():
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(leftDutyCycle)
-    rightFor.ChangeDutyCycle(0)3
+    rightFor.ChangeDutyCycle(0)
     rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
