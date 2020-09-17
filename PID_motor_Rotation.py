@@ -155,6 +155,7 @@ print("DATA", dataList)
 velocity = 0
 bearing = 180
 rotation = 0
+rotationAccuracy = 2
 
 # PID Gubbins
 LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
@@ -256,6 +257,10 @@ while True:
                 '''
                 # Work out something here
                 rotationError = bearing - theta
+                if rotationError > rotationAccuracy:
+                    pass
+                else:
+                    rotationError = 0
                 print('Rotation Error = ', rotationError)
                 rotation = rotational_PID(rotationError)
                 leftMotor_PID.setpoint = velocity - rotation # formerly LTPI
