@@ -153,7 +153,7 @@ print("DATA", dataList)
 
 # Movement variables
 velocity = 0
-bearing = 360
+bearing = 0
 rotation = 0
 rotationAccuracy = 2
 
@@ -249,13 +249,9 @@ while True:
                     Stopped = True                    
             else:
                 Stopped = False
-                # PID pass commands to motors
-                '''
-                leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
-                rightMotor_PID.setpoint = RTPI
-                leftDutyCycle = leftMotor_PID(leftTicks)
-                rightDutyCycle = rightMotor_PID(rightTicks)
-                '''
+                # Motor control PID Get Action function ----------
+                velocity = 0
+                bearing = 360
                 # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
