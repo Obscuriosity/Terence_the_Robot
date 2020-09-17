@@ -17,7 +17,7 @@ bot.flush()
 # Set up motors and GPIO pins
 GPIO.setmode(GPIO.BCM) # Use Broadcom pin numbering
 GPIO.setwarnings(False)
-GPIO.set(0.7, 0.4, 0.05)up(22, GPIO.OUT) # Left Motor Forward
+GPIO.setup(22, GPIO.OUT) # Left Motor Forward
 GPIO.setup(23, GPIO.OUT) # Left Motor Backward
 GPIO.setup(27, GPIO.OUT) # Right Motor Forward
 GPIO.setup(18, GPIO.OUT) # Right Motor Backward
