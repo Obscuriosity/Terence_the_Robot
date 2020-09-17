@@ -195,7 +195,7 @@ def Odometry():
     rightEncF = dataList[13]
     rightEncB = dataList[14]
     leftTicks = (leftEncF - prev_leftEncF) - (leftEncB - prev_leftEncB)
-    rightTicks = (rightEncF - prev_rightEncF) - (rightEncB = prev_rightEncB)
+    rightTicks = (rightEncF - prev_rightEncF) - (rightEncB - prev_rightEncB)
     prev_leftEncF = leftEncF
     prev_leftEncB = leftEncB
     prev_rightEncF = rightEncF
