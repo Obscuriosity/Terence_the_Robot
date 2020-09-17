@@ -259,8 +259,8 @@ while True:
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
                     rotationError = 0
-                print('Rotation Error = ', rotationError)
                 rotation = rotational_PID(rotationError)
+                print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation # formerly LTPI
                 rightMotor_PID.setpoint = velocity + rotation # fromerly RTPI
                 leftDutyCycle = leftMotor_PID(leftTicks)
