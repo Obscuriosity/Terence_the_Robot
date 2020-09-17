@@ -152,8 +152,8 @@ while noData == True:
 print("DATA", dataList)
 
 # Movement variables
-velocity = 50
-bearing = 0
+velocity = 0
+bearing = 180
 rotation = 0
 
 # PID Gubbins
