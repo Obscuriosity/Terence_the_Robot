@@ -61,17 +61,17 @@ def Pause(): # Pause routine, Uses sleep
             pause = 0
             print("Resumed")
 
-PID_data = {'t': [], 'LT': [], 'RT': [], 'LDC': [], 'RDC': []}
+PID_data = {'t': [], 'A': [], 'B': [], 'C': [], 'D': []}
 
 def Graph():
     title = ('simple-pid experiments')
     plt.figure(figsize=(12, 8))
-    plt.plot(PID_data['t'], PID_data['LT'], label="Left Ticks")
-    plt.plot(PID_data['t'], PID_data['RT'], label="Right Ticks")
-    plt.plot(PID_data['t'], PID_data['LDC'], label="Left Duty Cycle")
-    plt.plot(PID_data['t'], PID_data['RDC'], label="Right Duty Cycle")
+    plt.plot(PID_data['t'], PID_data['A'], label="Theta")
+    plt.plot(PID_data['t'], PID_data['B'], label="Bearing")
+    plt.plot(PID_data['t'], PID_data['C'], label="Left Setpoint")
+    plt.plot(PID_data['t'], PID_data['D'], label="Right Setpoint")
     plt.xlabel('Time')
-    plt.ylabel('Ticks')
+    plt.ylabel('Y')
     plt.title(title)
     plt.legend(loc=4)
     plt.show()
@@ -288,10 +288,10 @@ while True:
                 #Forward()
                 # add some data to a dictionary
                 PID_data['t'].append(t)
-                PID_data['LT'].append(leftTicks)
-                PID_data['RT'].append(rightTicks)
-                PID_data['LDC'].append(leftDutyCycle)
-                PID_data['RDC'].append(rightDutyCycle)
+                PID_data['A'].append(theta)
+                PID_data['B'].append(bearing)
+                PID_data['C'].append(leftMotor_PID.setpoint)
+                PID_data['D'].append(rightMotor_PID.setpoint)
 
                 '''
                 time
