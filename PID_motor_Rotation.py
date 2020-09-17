@@ -277,8 +277,7 @@ while True:
                     rightBac.ChangeDutyCycle(0)
                 
                 #Act
-                Forward()
-                theta
+                #Forward()
                 # add some data to a dictionary
                 PID_data['t'].append(t)
                 PID_data['LT'].append(leftTicks)
