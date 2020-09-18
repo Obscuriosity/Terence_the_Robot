@@ -230,7 +230,7 @@ def Odometry():
     botX += travel * math.sin(thetaRad);
     botY += travel * math.cos(thetaRad);
     print('x', int(botX), 'y', int(botY), 'theta', int(theta))
-
+times = 0
 while True:
 
     Pause()
@@ -260,7 +260,7 @@ while True:
             else:
                 Stopped = False
                 # Motor control PID Get Action function ----------
-                velocity = 0
+                velocity = 50
                 bearing = 30
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
@@ -270,13 +270,17 @@ while True:
                 # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
+                    times++
                     rotation = 0
                 else:
+                    times ++
                     rotation = rotational_PID(rotationError)
-                if t % 10:
+                if times < 10:
                     velocity = rotation * -1 # Right wheel stationary left moves
                 else:
                     velocity = rotation # Left wheel stationary right moves
+                    if times < 18:
+                        times = 0
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
