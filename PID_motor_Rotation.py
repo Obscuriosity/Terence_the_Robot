@@ -268,7 +268,7 @@ while True:
                 if leftMotor_PID.setpoint == 0:
                     leftDutyCycle = 0
                 if rightMotor_PID.setpoint == 0:
-                    rightMotor_PID = 0
+                    rightDutyCycle = 0
                 print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
                 # Move the motors
                 # Minus values move the wheels backwards and positive values forward.
