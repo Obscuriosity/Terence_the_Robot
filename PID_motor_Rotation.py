@@ -261,7 +261,7 @@ while True:
                 Stopped = False
                 # Motor control PID Get Action function ----------
                 velocity = 0
-                bearing = -290
+                bearing = -90
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
                     bearing -= 360
@@ -274,7 +274,6 @@ while True:
                 else:
                     rotation = rotational_PID(rotationError)
                     velocity = rotation
-                    velocity = abs(velocity)
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
