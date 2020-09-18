@@ -192,7 +192,7 @@ botX, botY = 0, 0
 
 def Odometry():
     wheelbase = 198
-    wheelRadius = 41.5?
+    wheelRadius = 41.5
     CPR = 990  # Clicks per Rotation
     wheelc = 2*wheelRadius*math.pi
     mmPC = wheelc/CPR # milimetres per count
