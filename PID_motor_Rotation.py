@@ -102,19 +102,24 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
         print('no Connection')
 
 def Forward():
-    #
+    # velocity > 0
+    # rotation
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
                     
 def Reverse():
+    # velocity < 0
+    # rotation = 0
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(leftDutyCycle)
     rightFor.ChangeDutyCycle(0)
     rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
+    # velocity = 0
+    # rotation < 0
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
@@ -256,7 +261,7 @@ while True:
                 Stopped = False
                 # Motor control PID Get Action function ----------
                 velocity = 0
-                bearing = -190
+                bearing = 290
                 bearing -= int(bearing/360) * 360
                 # Work out something here
                 rotationError = bearing - theta
@@ -264,7 +269,7 @@ while True:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
-                    #velocity = rotation
+                    velocity = rotation
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
