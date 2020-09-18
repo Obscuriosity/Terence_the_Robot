@@ -251,7 +251,7 @@ while True:
                 Stopped = False
                 # Motor control PID Get Action function ----------
                 velocity = 0
-                bearing = -120
+                bearing = -190
                 bearing -= int(bearing/180) * 180
                 # Work out something here
                 rotationError = bearing - theta
