@@ -261,7 +261,7 @@ while True:
                 Stopped = False
                 # Motor control PID Get Action function ----------
                 velocity = 0
-                bearing = -290
+                bearing = 290
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
                     bearing -= 360
