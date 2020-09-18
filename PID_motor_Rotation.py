@@ -216,10 +216,10 @@ def Odometry():
     TotalTravel += travel
     thetaRad += (leftTravel - rightTravel)/wheelbase
     theta = thetaRad*(180/math.pi) #convert to heading in degrees;
-    theta -= int(theta/360) * 360 # clip theta to plus or minus 360 degrees
+    theta -= int(theta/180) * 180 # clip theta to plus or minus 360 degrees
     botX += travel * math.sin(thetaRad);
     botY += travel * math.cos(thetaRad);
-    print(int(botX), int(botY), int(theta))
+    print('x', int(botX), 'y', int(botY), 'theta', int(theta))
 
 while True:
 
@@ -252,6 +252,7 @@ while True:
                 # Motor control PID Get Action function ----------
                 velocity = 0
                 bearing = 360
+                bearing -= int(bearing/180) * 180
                 # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
