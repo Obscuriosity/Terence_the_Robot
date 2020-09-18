@@ -251,7 +251,7 @@ while True:
                 Stopped = False
                 # Motor control PID Get Action function ----------
                 velocity = 0
-                bearing = 90
+                bearing = -120
                 bearing -= int(bearing/180) * 180
                 # Work out something here
                 rotationError = bearing - theta
@@ -260,11 +260,15 @@ while True:
                 else:
                     rotation = rotational_PID(rotationError)
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
-                leftMotor_PID.setpoint = velocity - rotation # formerly LTPI
-                rightMotor_PID.setpoint = velocity + rotation # fromerly RTPI
+                leftMotor_PID.setpoint = velocity - rotation #
+                rightMotor_PID.setpoint = velocity + rotation #
                 print(leftMotor_PID.setpoint, ' Setpoints ', rightMotor_PID.setpoint)
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
+                if leftMotor_PID.setpoint == 0:
+                    leftDutyCycle = 0
+                if rightMotor_PID.setpoint == 0:
+                    rightMotor_PID = 0
                 print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
                 # Move the motors
                 # Minus values move the wheels backwards and positive values forward.
