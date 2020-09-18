@@ -270,14 +270,14 @@ while True:
                 # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
-                    times++
                     rotation = 0
                 else:
-                    times ++
                     rotation = rotational_PID(rotationError)
                 if times < 10:
+                    times+=1
                     velocity = rotation * -1 # Right wheel stationary left moves
                 else:
+                    times+=1
                     velocity = rotation # Left wheel stationary right moves
                     if times < 18:
                         times = 0
