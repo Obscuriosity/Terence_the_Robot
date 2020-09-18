@@ -121,18 +121,22 @@ def SpinLeft():
     rightBac.ChangeDutyCycle(rightDutyCycle)
     
 def SpinRight():
+    # velocity = 0
+    # rotation > 0
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(leftDutyCycle)
     rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)    
 
 def TurnLeft():
+    # velocity = rotation < 0
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
 
 def TurnRight():
+    # velocity = rotation > 0
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
@@ -188,7 +192,7 @@ botX, botY = 0, 0
 
 def Odometry():
     wheelbase = 198
-    wheelRadius = 41.5
+    wheelRadius = 41.5?
     CPR = 990  # Clicks per Rotation
     wheelc = 2*wheelRadius*math.pi
     mmPC = wheelc/CPR # milimetres per count
@@ -260,7 +264,7 @@ while True:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
-                    velocity = rotation
+                    #velocity = rotation
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
