@@ -263,6 +263,10 @@ while True:
                 velocity = 0
                 bearing = 290
                 bearing -= int(bearing/360) * 360
+                if bearing > 180:
+                    bearing -= 360
+                else if bearing < -180:
+                    bearing += 360
                 # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
