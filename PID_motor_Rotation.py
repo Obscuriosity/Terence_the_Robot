@@ -155,7 +155,7 @@ print("DATA", dataList)
 velocity = 0
 bearing = 0
 rotation = 0
-rotationAccuracy = 2
+rotationAccuracy = 1
 
 # PID Gubbins
 LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
@@ -216,7 +216,7 @@ def Odometry():
     TotalTravel += travel
     thetaRad += (leftTravel - rightTravel)/wheelbase
     theta = thetaRad*(180/math.pi) #convert to heading in degrees;
-    theta -= int(theta/180) * 180 # clip theta to plus or minus 360 degrees
+    theta -= int(theta/360) * 360 # clip theta to plus or minus 360 degrees
     botX += travel * math.sin(thetaRad);
     botY += travel * math.cos(thetaRad);
     print('x', int(botX), 'y', int(botY), 'theta', int(theta))
@@ -252,7 +252,7 @@ while True:
                 # Motor control PID Get Action function ----------
                 velocity = 0
                 bearing = -190
-                bearing -= int(bearing/180) * 180
+                bearing -= int(bearing/360) * 360
                 # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
