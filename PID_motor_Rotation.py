@@ -102,6 +102,7 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
         print('no Connection')
 
 def Forward():
+    #
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(rightDutyCycle)
@@ -259,6 +260,7 @@ while True:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
+                    velocity = rotation
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
