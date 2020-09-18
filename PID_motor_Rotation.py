@@ -134,14 +134,14 @@ def SpinRight():
     rightBac.ChangeDutyCycle(0)    
 
 def TurnLeft():
-    # velocity = rotation < 0
+    # velocity = rotation
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
 
 def TurnRight():
-    # velocity = rotation > 0
+    # velocity = rotation * -1
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
@@ -261,7 +261,7 @@ while True:
                 Stopped = False
                 # Motor control PID Get Action function ----------
                 velocity = 0
-                bearing = 90
+                bearing = 30
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
                     bearing -= 360
@@ -273,7 +273,10 @@ while True:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
-                    velocity = rotation * -1
+                if t % 10:
+                    velocity = rotation * -1 # Right wheel stationary left moves
+                else:
+                    velocity = rotation # Left wheel stationary right moves
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
