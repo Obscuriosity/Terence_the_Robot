@@ -273,7 +273,8 @@ while True:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
-                    abs(velocity) = rotation
+                    velocity = rotation
+                    velocity = abs(velocity)
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
