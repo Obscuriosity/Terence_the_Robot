@@ -259,23 +259,28 @@ while True:
                     Stopped = True                    
             else:
                 Stopped = False
-                # Motor control PID Get Action function ----------
+                #Get action and return:
+                    # velocity
+                    # rotation or bearing?
+                # velocity = -rotation # Right wheel stationary left moves
+                # velocity = rotation # Left wheel stationary right moves
+                
+            #def Act(velocity, rotation, bearing) # Motor control PID function ----------
                 velocity = 0
+                # If bearing is given : do this -----
                 bearing = 100
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
                     bearing -= 360
                 elif bearing < -180:
                     bearing += 360
-                # Work out something here
                 rotationError = bearing - theta
                 if -rotationAccuracy < rotationError < rotationAccuracy:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
-                # velocity = -rotation # Right wheel stationary left moves
-                # velocity = rotation # Left wheel stationary right moves
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
+                # If bearing not involved : go straight to here ---
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
                 print(leftMotor_PID.setpoint, ' Setpoints ', rightMotor_PID.setpoint)
@@ -301,7 +306,6 @@ while True:
                     rightFor.ChangeDutyCycle(rightDutyCycle)
                     rightBac.ChangeDutyCycle(0)
                 
-                #Act
                 #Forward()
                 # add some data to a dictionary
                 PID_data['t'].append(t)
