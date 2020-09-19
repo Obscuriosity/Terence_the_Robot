@@ -134,14 +134,14 @@ def SpinRight():
     rightBac.ChangeDutyCycle(0)    
 
 def TurnLeft():
-    # velocity = rotation
+    # velocity = rotation # Left wheel stationary right moves
     leftFor.ChangeDutyCycle(0)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(rightDutyCycle)
     rightBac.ChangeDutyCycle(0)
 
 def TurnRight():
-    # velocity = -rotation
+    # velocity = -rotation # Right wheel stationary left moves
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
@@ -260,8 +260,8 @@ while True:
             else:
                 Stopped = False
                 # Motor control PID Get Action function ----------
-                velocity = 50
-                bearing = 30
+                velocity = 0
+                bearing = 100
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
                     bearing -= 360
