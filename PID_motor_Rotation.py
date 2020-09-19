@@ -141,7 +141,7 @@ def TurnLeft():
     rightBac.ChangeDutyCycle(0)
 
 def TurnRight():
-    # velocity = rotation * -1
+    # velocity = -rotation
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(0)
     rightFor.ChangeDutyCycle(0)
