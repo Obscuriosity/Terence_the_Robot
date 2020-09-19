@@ -42,7 +42,7 @@ Stopped = False
 def Stop():
     print("STOPPED")
     global leftDutyCycle, rightDutyCycle
-    leftDutyCycle, rightDutyCycle = 0, 0
+    leftDutyCycle, rightDutyCycle = 0, 0 # Or velocity = 0 / setpoint 0
     leftFor.ChangeDutyCycle(leftDutyCycle)
     leftBac.ChangeDutyCycle(leftDutyCycle)
     rightFor.ChangeDutyCycle(rightDutyCycle)
@@ -273,14 +273,8 @@ while True:
                     rotation = 0
                 else:
                     rotation = rotational_PID(rotationError)
-                if times < 10:
-                    times+=1
-                    velocity = rotation * -1 # Right wheel stationary left moves
-                else:
-                    times+=1
-                    velocity = rotation # Left wheel stationary right moves
-                    if times < 18:
-                        times = 0
+                # velocity = -rotation # Right wheel stationary left moves
+                # velocity = rotation # Left wheel stationary right moves
                 print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
                 leftMotor_PID.setpoint = velocity - rotation #
                 rightMotor_PID.setpoint = velocity + rotation #
