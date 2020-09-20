@@ -307,7 +307,7 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                    Act()
+                Act()
                     
             else:
                 Stopped = False
