@@ -64,13 +64,14 @@ def Pause(): # Pause routine, Uses sleep
 PID_data = {'t': [], 'A': [], 'B': [], 'C': [], 'D': []}
 
 def Graph():
-    title = ('simple-pid experiments')
+    title = ('Odometry experiments')
     plt.figure(figsize=(12, 8))
-    plt.plot(PID_data['t'], PID_data['A'], label="Theta")
-    plt.plot(PID_data['t'], PID_data['B'], label="Bearing")
-    plt.plot(PID_data['t'], PID_data['C'], label="velocity")
-    plt.plot(PID_data['t'], PID_data['D'], label="rotation")
-    plt.xlabel('Time')
+    #plt.plot(PID_data['t'], PID_data['A'], label="Theta")
+    #plt.plot(PID_data['t'], PID_data['B'], label="Bearing")
+    #plt.plot(PID_data['t'], PID_data['C'], label="velocity")
+    #plt.plot(PID_data['t'], PID_data['D'], label="rotation")
+    plt.scatter(PID_data[A], PID_data[B])
+    plt.xlabel('x')
     plt.ylabel('Y')
     plt.title(title)
     plt.legend(loc=4)
@@ -333,8 +334,8 @@ while True:
                 Act()
             # add some data to a dictionary
             PID_data['t'].append(t)
-            PID_data['A'].append(theta)
-            PID_data['B'].append(bearing)
+            PID_data['A'].append(botX)
+            PID_data['B'].append(botY)
             PID_data['C'].append(velocity)
             PID_data['D'].append(rotation)
 
