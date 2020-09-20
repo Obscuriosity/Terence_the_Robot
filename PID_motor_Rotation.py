@@ -110,12 +110,12 @@ def Forward():
     rightBac.ChangeDutyCycle(0)
                     
 def Reverse():
-    # velocity < 0
-    # rotation = 0
-    leftFor.ChangeDutyCycle(0)
-    leftBac.ChangeDutyCycle(leftDutyCycle)
-    rightFor.ChangeDutyCycle(0)
-    rightBac.ChangeDutyCycle(rightDutyCycle)
+    velocity = -50
+    rotation = 0
+    #leftFor.ChangeDutyCycle(0)
+    #leftBac.ChangeDutyCycle(leftDutyCycle)
+    #rightFor.ChangeDutyCycle(0)
+    #rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
     velocity = 0
@@ -255,7 +255,7 @@ while True:
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
                     Stop()
-                    Graph()
+                    #Graph()
                     Stopped = True
                     if LB == 0:
                         SpinLeft()
