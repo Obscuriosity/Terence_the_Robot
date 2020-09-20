@@ -102,12 +102,12 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
         print('no Connection')
 
 def Forward():
-    # velocity > 0
-    # rotation
-    leftFor.ChangeDutyCycle(leftDutyCycle)
-    leftBac.ChangeDutyCycle(0)
-    rightFor.ChangeDutyCycle(rightDutyCycle)
-    rightBac.ChangeDutyCycle(0)
+    velocity = 50
+    rotation = 0
+    #leftFor.ChangeDutyCycle(leftDutyCycle)
+    #leftBac.ChangeDutyCycle(0)
+    #rightFor.ChangeDutyCycle(rightDutyCycle)
+    #rightBac.ChangeDutyCycle(0)
                     
 def Reverse():
     velocity = -50
@@ -134,18 +134,18 @@ def SpinRight():
     #rightBac.ChangeDutyCycle(0)    
 
 def TurnLeft():
-    # velocity = rotation # Left wheel stationary right moves
-    leftFor.ChangeDutyCycle(0)
-    leftBac.ChangeDutyCycle(0)
-    rightFor.ChangeDutyCycle(rightDutyCycle)
-    rightBac.ChangeDutyCycle(0)
+    velocity = rotation # Left wheel stationary right moves
+    #leftFor.ChangeDutyCycle(0)
+    #leftBac.ChangeDutyCycle(0)
+    #rightFor.ChangeDutyCycle(rightDutyCycle)
+    #rightBac.ChangeDutyCycle(0)
 
 def TurnRight():
-    # velocity = -rotation # Right wheel stationary left moves
-    leftFor.ChangeDutyCycle(leftDutyCycle)
-    leftBac.ChangeDutyCycle(0)
-    rightFor.ChangeDutyCycle(0)
-    rightBac.ChangeDutyCycle(0)      
+    velocity = -rotation # Right wheel stationary left moves
+    #leftFor.ChangeDutyCycle(leftDutyCycle)
+    #leftBac.ChangeDutyCycle(0)
+    #rightFor.ChangeDutyCycle(0)
+    #rightBac.ChangeDutyCycle(0)      
 
 # Step/time parameters
 lasttime = time.time() # Variable to store time for timesteps
@@ -318,7 +318,8 @@ while True:
                 
 
                 
-                #Forward()
+                Forward()
+                Act()
                 # add some data to a dictionary
                 PID_data['t'].append(t)
                 PID_data['A'].append(theta)
