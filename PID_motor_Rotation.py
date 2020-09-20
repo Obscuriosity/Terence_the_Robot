@@ -118,20 +118,20 @@ def Reverse():
     rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
-    # velocity = 0
-    # rotation < 0
-    leftFor.ChangeDutyCycle(leftDutyCycle)
-    leftBac.ChangeDutyCycle(0)
-    rightFor.ChangeDutyCycle(0)
-    rightBac.ChangeDutyCycle(rightDutyCycle)
+    velocity = 0
+    rotation = -100
+    #leftFor.ChangeDutyCycle(leftDutyCycle)
+    #leftBac.ChangeDutyCycle(0)
+    #rightFor.ChangeDutyCycle(0)
+    #rightBac.ChangeDutyCycle(rightDutyCycle)
     
 def SpinRight():
-    # velocity = 0
-    # rotation > 0
-    leftFor.ChangeDutyCycle(0)
-    leftBac.ChangeDutyCycle(leftDutyCycle)
-    rightFor.ChangeDutyCycle(rightDutyCycle)
-    rightBac.ChangeDutyCycle(0)    
+    velocity = 0
+    rotation = 100
+    #leftFor.ChangeDutyCycle(0)
+    #leftBac.ChangeDutyCycle(leftDutyCycle)
+    #rightFor.ChangeDutyCycle(rightDutyCycle)
+    #rightBac.ChangeDutyCycle(0)    
 
 def TurnLeft():
     # velocity = rotation # Left wheel stationary right moves
@@ -162,7 +162,7 @@ while noData == True:
 print("DATA", dataList)
 
 # Movement variables
-velocity = 0
+velocity = 50
 bearing = 0
 rotation = 0
 rotationAccuracy = 1
@@ -256,7 +256,17 @@ while True:
                 if Stopped == False:
                     Stop()
                     Graph()
-                    Stopped = True                    
+                    Stopped = True
+                    if LB == 0:
+                        SpinLeft()
+                        print("Left Hit")
+                    elif FB == 0:
+                        Reverse()
+                        print('Front Hit')
+                    elif RB == 0:
+                        SpinRight()
+                        print('Right Hit')
+                    
             else:
                 Stopped = False
                 #Get action and return:
@@ -266,9 +276,8 @@ while True:
                 # velocity = rotation # Left wheel stationary right moves
                 
             #def Act(velocity, rotation, bearing) # Motor control PID function ----------
-                velocity = 0
                 # If bearing is given : do this -----
-                bearing = 100
+                bearing = theta
                 bearing -= int(bearing/360) * 360
                 if bearing > 180:
                     bearing -= 360
