@@ -339,12 +339,12 @@ while True:
             PID_data['C'].append(velocity)
             PID_data['D'].append(rotation)
 
-                '''
-                time
-                Serial - info from arduino - Get State
-                odometry - where t f are we - Get state
-                Sensors - react to bumps etc - Vehicle 1
-                Decisions/Thinking - Policy
-                PID - motor control - Act
-                Reward?
-                '''
+            '''
+            time
+            Serial - info from arduino - Get State
+            odometry - where t f are we - Get state
+            Sensors - react to bumps etc - Vehicle 1
+            Decisions/Thinking - Policy
+            PID - motor control - Act
+            Reward?
+            '''
