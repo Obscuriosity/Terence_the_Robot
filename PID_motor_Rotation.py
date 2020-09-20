@@ -201,7 +201,7 @@ prev_leftEncF, prev_leftEncB = 0, 0
 prev_rightEncF, prev_rightEncB = 0, 0
 
 #Rotational PID will need some odoemtry in order to work out rotation
-travel, TotalTravel, thetaRad, theta = 0, 0, 0, 0
+travel, TotalTravel, thetaRad, theta = 0.0, 0.0, 0.0, 0.0
 botX, botY = 0, 0
 
 def Odometry():
@@ -304,10 +304,11 @@ while True:
                 Serial()
             Serial()
             Odometry()
-            # Check Bumpers
+            # Get State
             LB = dataList[0]
             FB = dataList[1]
             RB = dataList[2]
+            # Get Action
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
                     Stopped = True
@@ -320,15 +321,11 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                    Act()
-                else:
-                    Act()
+                Act()
                     
             else:
                 Stopped = False
-                #Get action and return:
-                    # velocity
-                    # rotation or bearing?
+                #Get action
                 velocity = 50
                 Forward()
                 Act()
