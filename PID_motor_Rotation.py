@@ -235,6 +235,10 @@ def Odometry():
     thetaRad += (leftTravel - rightTravel)/wheelbase
     theta = thetaRad*(180/math.pi) #convert to heading in degrees;
     theta -= int(theta/360) * 360 # clip theta to plus or minus 360 degrees
+    if theta > 180:
+        theta -= 360
+    elif theta < -180:
+        theta += 360
     botX += travel * math.sin(thetaRad);
     botY += travel * math.cos(thetaRad);
     print('x', int(botX), 'y', int(botY), 'theta', int(theta))
