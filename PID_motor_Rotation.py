@@ -233,7 +233,8 @@ def Odometry():
 
 def Act(): # velocity, rotation, bearing) # Motor control PID function ----------
     # If bearing is given : do this -----
-    global velocity, rotation, bearing
+    global velocity, rotation, bearing, rotationAccuracy
+    global leftDutyCytcle, rightDutyCycle
     bearing = theta
     bearing -= int(bearing/360) * 360
     if bearing > 180:
@@ -297,7 +298,7 @@ while True:
                 if Stopped == False:
                     Stop()
                     #Graph()
-                    Stopped = True
+                    #Stopped = True
                     if LB == 0:
                         SpinLeft()
                         print("Left Hit")
@@ -307,7 +308,8 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                Act()
+                    Act()
+                    time.sleep(.1)
                     
             else:
                 Stopped = False
