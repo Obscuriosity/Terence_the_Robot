@@ -233,6 +233,7 @@ def Odometry():
 
 def Act(): # velocity, rotation, bearing) # Motor control PID function ----------
     # If bearing is given : do this -----
+    global velocity, rotation, bearing
     bearing = theta
     bearing -= int(bearing/360) * 360
     if bearing > 180:
