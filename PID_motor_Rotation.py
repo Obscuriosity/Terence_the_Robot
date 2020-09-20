@@ -103,7 +103,7 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
 
 def Forward():
     global velocity, rotation
-    velocity = 50
+    #velocity = velocity
     rotation = 0
     #leftFor.ChangeDutyCycle(leftDutyCycle)
     #leftBac.ChangeDutyCycle(0)
@@ -112,7 +112,7 @@ def Forward():
                     
 def Reverse():
     global velocity, rotation
-    velocity = -50
+    #velocity = velocity
     rotation = 0
     #leftFor.ChangeDutyCycle(0)
     #leftBac.ChangeDutyCycle(leftDutyCycle)
@@ -121,8 +121,8 @@ def Reverse():
 
 def SpinLeft():
     global velocity, rotation
+    rotation = -velocity
     velocity = 0
-    rotation = -100
     #leftFor.ChangeDutyCycle(leftDutyCycle)
     #leftBac.ChangeDutyCycle(0)
     #rightFor.ChangeDutyCycle(0)
@@ -130,8 +130,8 @@ def SpinLeft():
     
 def SpinRight():
     global velocity, rotation
+    rotation = velocity
     velocity = 0
-    rotation = 100
     #leftFor.ChangeDutyCycle(0)
     #leftBac.ChangeDutyCycle(leftDutyCycle)
     #rightFor.ChangeDutyCycle(rightDutyCycle)
@@ -139,7 +139,7 @@ def SpinRight():
 
 def TurnLeft():
     global velocity, rotation
-    rotation = 50
+    rotation = velocity
     velocity = rotation # Left wheel stationary right moves
     #leftFor.ChangeDutyCycle(0)
     #leftBac.ChangeDutyCycle(0)
@@ -148,7 +148,7 @@ def TurnLeft():
 
 def TurnRight():
     global velocity, rotation
-    rotation = 50
+    rotation = velocity
     velocity = -rotation # Right wheel stationary left moves
     #leftFor.ChangeDutyCycle(leftDutyCycle)
     #leftBac.ChangeDutyCycle(0)
@@ -309,7 +309,6 @@ while True:
             RB = dataList[2]
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
-                    rotatin = velocity
                     velocity = 0
                     Stopped = True
                     if LB == 0:
@@ -330,11 +329,7 @@ while True:
                 #Get action and return:
                     # velocity
                     # rotation or bearing?
-                # velocity = -rotation # Right wheel stationary left moves
-                # velocity = rotation # Left wheel stationary right moves
-                
-
-                
+                velocity = 50
                 Forward()
                 Act()
             # add some data to a dictionary
