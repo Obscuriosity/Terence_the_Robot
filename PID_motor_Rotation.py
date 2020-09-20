@@ -102,6 +102,7 @@ def Serial():  # Communicate with arduino to read encoders, bumpers and sonars
         print('no Connection')
 
 def Forward():
+    global velocity, rotation
     velocity = 50
     rotation = 0
     #leftFor.ChangeDutyCycle(leftDutyCycle)
@@ -110,6 +111,7 @@ def Forward():
     #rightBac.ChangeDutyCycle(0)
                     
 def Reverse():
+    global velocity, rotation
     velocity = -50
     rotation = 0
     #leftFor.ChangeDutyCycle(0)
@@ -118,6 +120,7 @@ def Reverse():
     #rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
+    global velocity, rotation
     velocity = 0
     rotation = -100
     #leftFor.ChangeDutyCycle(leftDutyCycle)
@@ -126,6 +129,7 @@ def SpinLeft():
     #rightBac.ChangeDutyCycle(rightDutyCycle)
     
 def SpinRight():
+    global velocity, rotation
     velocity = 0
     rotation = 100
     #leftFor.ChangeDutyCycle(0)
@@ -134,6 +138,8 @@ def SpinRight():
     #rightBac.ChangeDutyCycle(0)    
 
 def TurnLeft():
+    global velocity, rotation
+    rotation = 50
     velocity = rotation # Left wheel stationary right moves
     #leftFor.ChangeDutyCycle(0)
     #leftBac.ChangeDutyCycle(0)
@@ -141,6 +147,8 @@ def TurnLeft():
     #rightBac.ChangeDutyCycle(0)
 
 def TurnRight():
+    global velocity, rotation
+    rotation = 50
     velocity = -rotation # Right wheel stationary left moves
     #leftFor.ChangeDutyCycle(leftDutyCycle)
     #leftBac.ChangeDutyCycle(0)
