@@ -70,7 +70,7 @@ def Graph():
     #plt.plot(PID_data['t'], PID_data['B'], label="Bearing")
     #plt.plot(PID_data['t'], PID_data['C'], label="velocity")
     #plt.plot(PID_data['t'], PID_data['D'], label="rotation")
-    plt.scatter(PID_data[A], PID_data[B])
+    plt.scatter(PID_data['A'], PID_data['B'])
     plt.xlabel('x')
     plt.ylabel('Y')
     plt.title(title)
