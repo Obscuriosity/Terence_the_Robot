@@ -231,7 +231,7 @@ def Odometry():
     botY += travel * math.cos(thetaRad);
     print('x', int(botX), 'y', int(botY), 'theta', int(theta))
 
-   def Act(velocity, rotation, bearing) # Motor control PID function ----------
+def Act(velocity, rotation, bearing) # Motor control PID function ----------
     # If bearing is given : do this -----
     bearing = theta
     bearing -= int(bearing/360) * 360
