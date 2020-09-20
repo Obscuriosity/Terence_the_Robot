@@ -332,12 +332,12 @@ while True:
                 
                 Forward()
                 Act()
-                # add some data to a dictionary
-                PID_data['t'].append(t)
-                PID_data['A'].append(theta)
-                PID_data['B'].append(bearing)
-                PID_data['C'].append(velocity)
-                PID_data['D'].append(rotation)
+            # add some data to a dictionary
+            PID_data['t'].append(t)
+            PID_data['A'].append(theta)
+            PID_data['B'].append(bearing)
+            PID_data['C'].append(velocity)
+            PID_data['D'].append(rotation)
 
                 '''
                 time
