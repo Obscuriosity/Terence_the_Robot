@@ -68,8 +68,8 @@ def Graph():
     plt.figure(figsize=(12, 8))
     plt.plot(PID_data['t'], PID_data['A'], label="Theta")
     plt.plot(PID_data['t'], PID_data['B'], label="Bearing")
-    plt.plot(PID_data['t'], PID_data['C'], label="Left Setpoint")
-    plt.plot(PID_data['t'], PID_data['D'], label="Right Setpoint")
+    plt.plot(PID_data['t'], PID_data['C'], label="velocity")
+    plt.plot(PID_data['t'], PID_data['D'], label="rotation")
     plt.xlabel('Time')
     plt.ylabel('Y')
     plt.title(title)
@@ -336,8 +336,8 @@ while True:
                 PID_data['t'].append(t)
                 PID_data['A'].append(theta)
                 PID_data['B'].append(bearing)
-                PID_data['C'].append(leftMotor_PID.setpoint)
-                PID_data['D'].append(rightMotor_PID.setpoint)
+                PID_data['C'].append(velocity)
+                PID_data['D'].append(rotation)
 
                 '''
                 time
