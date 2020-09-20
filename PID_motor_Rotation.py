@@ -306,8 +306,7 @@ while True:
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
                     Stop()
-                    #Graph()
-                    #Stopped = True
+                    Stopped = True
                     if LB == 0:
                         SpinLeft()
                         print("Left Hit")
@@ -318,7 +317,8 @@ while True:
                         SpinRight()
                         print('Right Hit')
                     Act()
-                    time.sleep(.1)
+                else:
+                    Act()
                     
             else:
                 Stopped = False
