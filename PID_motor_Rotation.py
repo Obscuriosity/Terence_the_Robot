@@ -305,13 +305,14 @@ while True:
             RB = dataList[2]
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
-                    Stop()
+                    rotatin = velocity
+                    velocity = 0
                     Stopped = True
                     if LB == 0:
                         SpinLeft()
                         print("Left Hit")
                     elif FB == 0:
-                        Reverse()
+                        SpinRight()
                         print('Front Hit')
                     elif RB == 0:
                         SpinRight()
