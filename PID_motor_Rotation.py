@@ -235,7 +235,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     # If bearing is given : do this -----
     global velocity, rotation, bearing, rotationAccuracy
     global leftDutyCytcle, rightDutyCycle
-    bearing = theta
+    '''bearing = theta
     bearing -= int(bearing/360) * 360
     if bearing > 180:
         bearing -= 360
@@ -246,7 +246,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
         rotation = 0
     else:
         rotation = rotational_PID(rotationError)
-    print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
+    print('Rotation Error = ', rotationError, '. Rotation = ', rotation)'''
     # If bearing not involved : go straight to here ---
     leftMotor_PID.setpoint = velocity - rotation #
     rightMotor_PID.setpoint = velocity + rotation #
