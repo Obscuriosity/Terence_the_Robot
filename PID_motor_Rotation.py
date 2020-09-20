@@ -230,7 +230,47 @@ def Odometry():
     botX += travel * math.sin(thetaRad);
     botY += travel * math.cos(thetaRad);
     print('x', int(botX), 'y', int(botY), 'theta', int(theta))
-times = 0
+
+   def Act(velocity, rotation, bearing) # Motor control PID function ----------
+    # If bearing is given : do this -----
+    bearing = theta
+    bearing -= int(bearing/360) * 360
+    if bearing > 180:
+        bearing -= 360
+    elif bearing < -180:
+        bearing += 360
+    rotationError = bearing - theta
+    if -rotationAccuracy < rotationError < rotationAccuracy:
+        rotation = 0
+    else:
+        rotation = rotational_PID(rotationError)
+    print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
+    # If bearing not involved : go straight to here ---
+    leftMotor_PID.setpoint = velocity - rotation #
+    rightMotor_PID.setpoint = velocity + rotation #
+    print(leftMotor_PID.setpoint, ' Setpoints ', rightMotor_PID.setpoint)
+    leftDutyCycle = leftMotor_PID(leftTicks)
+    rightDutyCycle = rightMotor_PID(rightTicks)
+    if leftMotor_PID.setpoint == 0:
+        leftDutyCycle = 0
+    if rightMotor_PID.setpoint == 0:
+        rightDutyCycle = 0
+    print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
+    # Move the motors
+    # Minus values move the wheels backwards and positive values forward.
+    if leftDutyCycle < 0:
+        leftFor.ChangeDutyCycle(0)
+        leftBac.ChangeDutyCycle(-leftDutyCycle)
+    else:
+        leftFor.ChangeDutyCycle(leftDutyCycle)
+        leftBac.ChangeDutyCycle(0)
+    if rightDutyCycle < 0:
+        rightFor.ChangeDutyCycle(0)
+        rightBac.ChangeDutyCycle(-rightDutyCycle)
+    else:
+        rightFor.ChangeDutyCycle(rightDutyCycle)
+        rightBac.ChangeDutyCycle(0
+                                 
 while True:
 
     Pause()
@@ -266,6 +306,7 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
+                    Act()
                     
             else:
                 Stopped = False
@@ -275,45 +316,7 @@ while True:
                 # velocity = -rotation # Right wheel stationary left moves
                 # velocity = rotation # Left wheel stationary right moves
                 
-            #def Act(velocity, rotation, bearing) # Motor control PID function ----------
-                # If bearing is given : do this -----
-                bearing = theta
-                bearing -= int(bearing/360) * 360
-                if bearing > 180:
-                    bearing -= 360
-                elif bearing < -180:
-                    bearing += 360
-                rotationError = bearing - theta
-                if -rotationAccuracy < rotationError < rotationAccuracy:
-                    rotation = 0
-                else:
-                    rotation = rotational_PID(rotationError)
-                print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
-                # If bearing not involved : go straight to here ---
-                leftMotor_PID.setpoint = velocity - rotation #
-                rightMotor_PID.setpoint = velocity + rotation #
-                print(leftMotor_PID.setpoint, ' Setpoints ', rightMotor_PID.setpoint)
-                leftDutyCycle = leftMotor_PID(leftTicks)
-                rightDutyCycle = rightMotor_PID(rightTicks)
-                if leftMotor_PID.setpoint == 0:
-                    leftDutyCycle = 0
-                if rightMotor_PID.setpoint == 0:
-                    rightDutyCycle = 0
-                print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
-                # Move the motors
-                # Minus values move the wheels backwards and positive values forward.
-                if leftDutyCycle < 0:
-                    leftFor.ChangeDutyCycle(0)
-                    leftBac.ChangeDutyCycle(-leftDutyCycle)
-                else:
-                    leftFor.ChangeDutyCycle(leftDutyCycle)
-                    leftBac.ChangeDutyCycle(0)
-                if rightDutyCycle < 0:
-                    rightFor.ChangeDutyCycle(0)
-                    rightBac.ChangeDutyCycle(-rightDutyCycle)
-                else:
-                    rightFor.ChangeDutyCycle(rightDutyCycle)
-                    rightBac.ChangeDutyCycle(0)
+
                 
                 #Forward()
                 # add some data to a dictionary
