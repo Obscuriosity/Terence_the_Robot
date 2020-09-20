@@ -269,10 +269,10 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
         rightBac.ChangeDutyCycle(-rightDutyCycle)
     else:
         rightFor.ChangeDutyCycle(rightDutyCycle)
-        rightBac.ChangeDutyCycle(0
-                                 
-while True:
+        rightBac.ChangeDutyCycle(0)
 
+while True:
+    
     Pause()
     if pause == 1:
         pass
