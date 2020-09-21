@@ -189,9 +189,9 @@ rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
 leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
 rotational_PID.tunings = rotationalTunings
-leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
-rightMotor_PID.sample_time = 0.01
-rotational_PID.sample_time = 0.01
+#leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
+#rightMotor_PID.sample_time = 0.01
+#rotational_PID.sample_time = 0.01
 leftMotor_PID.output_limits = (-100, 100)    # output value (Duty Cycle)
 rightMotor_PID.output_limits = (-100, 100)
 rotational_PID.output_limits = (-100, 100)
