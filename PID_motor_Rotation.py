@@ -311,6 +311,7 @@ while True:
             # Get Action
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
+                    Stop()
                     Stopped = True
                     if LB == 0:
                         SpinLeft()
