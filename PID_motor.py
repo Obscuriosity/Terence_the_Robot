@@ -154,7 +154,7 @@ LTPI, RTPI = 50, 50 # Ticks per Interval, initial setpoint
 #tunings = (2, 1.0, 0.01) # Fast but permissibly erratic
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
-tunings = (1.0, 0.5, 0.05) # Default
+tunings = (0.8, 0.5, 0.05) # Default
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 leftMotor_PID.tunings = tunings
@@ -191,7 +191,7 @@ while True:
             rightTicks = rightEnc - prev_rightEnc
             prev_leftEnc = leftEnc
             prev_rightEnc = rightEnc
-            print(leftTicks, ' Left Ticks | Right Ticks ', rightTicks)
+            print(leftTicks, ' L Ticks R ', rightTicks)
             leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
             rightMotor_PID.setpoint = RTPI
             PID_data['t'].append(t)
@@ -203,12 +203,15 @@ while True:
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
                     Stop()
+                    leftMotor_PID.setpoint = 0
+                    rightMotor_PID.setpoint = 0
                     Graph()
                     Stopped = True                    
             else:
                 Stopped = False
                 leftDutyCycle = leftMotor_PID(leftTicks)
                 rightDutyCycle = rightMotor_PID(rightTicks)
+                print(round(leftDutyCycle, 2), ' Duty Cycles ', round(rightDutyCycle, 2))
                 Forward()
                
                
