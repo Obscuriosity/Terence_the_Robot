@@ -159,8 +159,8 @@ leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
-leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
-rightMotor_PID.sample_time = 0.01
+#leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
+#rightMotor_PID.sample_time = 0.01
 leftMotor_PID.output_limits = (0, 100)    # output value will be between 0 and 100
 rightMotor_PID.output_limits = (0, 100)
 prev_leftEnc = 0
