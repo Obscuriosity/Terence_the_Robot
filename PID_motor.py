@@ -154,7 +154,7 @@ LTPI, RTPI = 50, 50 # Ticks per Interval, initial setpoint
 #tunings = (2, 1.0, 0.01) # Fast but permissibly erratic
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
-tunings = (0.8, 0.5, 0.05) # Default
+tunings = (1.0, 0.5, 0.05) # Default
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 leftMotor_PID.tunings = tunings
