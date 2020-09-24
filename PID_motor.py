@@ -178,6 +178,7 @@ while True:
             #print(step)
             previousStep = time.time()
             t += 1
+            print('Time', t)
             while noData == True:
                 Stop()
                 Serial()
@@ -194,6 +195,7 @@ while True:
             print(leftTicks, ' L Ticks R ', rightTicks)
             leftMotor_PID.setpoint = LTPI # motor_PID setpoints set Ticks per interval for speed
             rightMotor_PID.setpoint = RTPI
+            print(leftMotor_PID.setpoint, 'Setpoints', rightMotor_PID.setpoint)
             PID_data['t'].append(t)
             PID_data['LT'].append(leftTicks)
             PID_data['RT'].append(rightTicks)
