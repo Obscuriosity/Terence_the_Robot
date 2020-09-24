@@ -247,7 +247,7 @@ def Odometry():
 def Act(): # velocity, rotation, bearing) # Motor control PID function ----------
     # If bearing is given : do this -----
     global velocity, rotation, bearing, rotationAccuracy
-    global leftDutyCytcle, rightDutyCycle
+    global leftDutyCycle, rightDutyCycle
     print ('Velocity', velocity, 'Rotation', rotation)
     '''bearing = theta
     bearing -= int(bearing/360) * 360
@@ -265,12 +265,14 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     leftMotor_PID.setpoint = velocity - rotation #
     rightMotor_PID.setpoint = velocity + rotation #
     print(leftMotor_PID.setpoint, ' Setpoints ', rightMotor_PID.setpoint)
-    leftDutyCycle = leftMotor_PID(leftTicks)
-    rightDutyCycle = rightMotor_PID(rightTicks)
+    leftDutyCycle += leftMotor_PID(leftTicks)
+    rightDutyCycle += rightMotor_PID(rightTicks)
     if leftMotor_PID.setpoint == 0:
         leftDutyCycle = 0
     if rightMotor_PID.setpoint == 0:
         rightDutyCycle = 0
+    leftDutyCycle = max(min(100, leftDutyCycle), -100)  # The motor speed needs to be between 0 and 100, so clamp the value using max and min
+    rightDutyCycle = max(min(100, rightDutyCycle), -100)
     print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
     # Move the motors
     # Minus values move the wheels backwards and positive values forward.
