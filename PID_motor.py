@@ -211,8 +211,8 @@ while True:
                 Stopped = False
                 leftDutyCycle += leftMotor_PID(leftTicks)
                 rightDutyCycle += rightMotor_PID(rightTicks)
-                leftDutyCycle = max(min(100, leftDutyCycle), -100)  # The motor speed needs to be between 0 and 100, so clamp the value using max and min
-                rightDutyCycle = max(min(100, rightDutyCycle), -100)
+                leftDutyCycle = max(min(100, leftDutyCycle), 0)  # The motor speed needs to be between 0 and 100, so clamp the value using max and min
+                rightDutyCycle = max(min(100, rightDutyCycle), 0)
                 print(round(leftDutyCycle, 2), ' Duty Cycles ', round(rightDutyCycle, 2))
                 Forward()
                
