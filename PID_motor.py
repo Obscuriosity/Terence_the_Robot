@@ -161,8 +161,8 @@ leftMotor_PID.tunings = tunings
 rightMotor_PID.tunings = tunings
 #leftMotor_PID.sample_time = 0.01  # update every 0.01 seconds
 #rightMotor_PID.sample_time = 0.01
-leftMotor_PID.output_limits = (0, 100)    # output value will be between 0 and 100
-rightMotor_PID.output_limits = (0, 100)
+leftMotor_PID.output_limits = (-100, 100)    # output value will be between 0 and 100
+rightMotor_PID.output_limits = (-100, 100)
 prev_leftEnc = 0
 prev_rightEnc = 0
 
