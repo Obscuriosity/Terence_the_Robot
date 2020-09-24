@@ -59,7 +59,7 @@ def Pause(): # Pause routine, Uses sleep
             pause = 0
             print("Resumed")
 
-PID_data = {'t': [], 'LT': [], 'RT': [], 'LDC': [], 'RDC': []}
+PID_data = {'t': [], 'LT': [], 'RT': [], 'LDC': [], 'RDC': [], 'A': [], 'B':[]}
 
 def Graph():
     title = ('simple-pid experiments')
@@ -68,6 +68,8 @@ def Graph():
     plt.plot(PID_data['t'], PID_data['RT'], label="Right Ticks")
     plt.plot(PID_data['t'], PID_data['LDC'], label="Left Duty Cycle")
     plt.plot(PID_data['t'], PID_data['RDC'], label="Right Duty Cycle")
+    plt.plot(PID_data['t'], PID_data['A'], label="Left Setpoint")
+    plt.plot(PID_data['t'], PID_data['B'], label="Right Setpoint")
     plt.xlabel('Time')
     plt.ylabel('Ticks')
     plt.title(title)
@@ -201,6 +203,8 @@ while True:
             PID_data['RT'].append(rightTicks)
             PID_data['LDC'].append(leftDutyCycle)
             PID_data['RDC'].append(rightDutyCycle)
+            PID_data['A'].append(leftMotor_PID.setpoint)
+            PID_data['B'].append(rightMotor_PID.setpoint)
             
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
