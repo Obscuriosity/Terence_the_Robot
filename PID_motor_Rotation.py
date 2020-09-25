@@ -225,7 +225,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     global velocity, rotation, bearing, rotationAccuracy
     global leftDutyCycle, rightDutyCycle
     print ('Velocity', velocity, 'Rotation', rotation)
-    bearing = theta
+    #bearing = theta
     bearing -= int(bearing/360) * 360
     if bearing > 180:
         bearing -= 360
