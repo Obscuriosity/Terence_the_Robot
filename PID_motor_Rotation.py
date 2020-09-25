@@ -106,55 +106,31 @@ def Forward():
     global velocity, rotation
     #velocity = velocity
     rotation = 0
-    #leftFor.ChangeDutyCycle(leftDutyCycle)
-    #leftBac.ChangeDutyCycle(0)
-    #rightFor.ChangeDutyCycle(rightDutyCycle)
-    #rightBac.ChangeDutyCycle(0)
                     
 def Reverse():
     global velocity, rotation
     #velocity = velocity
     rotation = 0
-    #leftFor.ChangeDutyCycle(0)
-    #leftBac.ChangeDutyCycle(leftDutyCycle)
-    #rightFor.ChangeDutyCycle(0)
-    #rightBac.ChangeDutyCycle(rightDutyCycle)
 
 def SpinLeft():
     global velocity, rotation
     rotation = -velocity
     velocity = 0
-    #leftFor.ChangeDutyCycle(leftDutyCycle)
-    #leftBac.ChangeDutyCycle(0)
-    #rightFor.ChangeDutyCycle(0)
-    #rightBac.ChangeDutyCycle(rightDutyCycle)
     
 def SpinRight():
     global velocity, rotation
     rotation = velocity
     velocity = 0
-    #leftFor.ChangeDutyCycle(0)
-    #leftBac.ChangeDutyCycle(leftDutyCycle)
-    #rightFor.ChangeDutyCycle(rightDutyCycle)
-    #rightBac.ChangeDutyCycle(0)    
 
-def TurnLeft():
+def TurnLeft(): # Left wheel stationary right moves
     global velocity, rotation
     rotation = velocity
-    velocity = rotation # Left wheel stationary right moves
-    #leftFor.ChangeDutyCycle(0)
-    #leftBac.ChangeDutyCycle(0)
-    #rightFor.ChangeDutyCycle(rightDutyCycle)
-    #rightBac.ChangeDutyCycle(0)
+    velocity = rotation
 
-def TurnRight():
+def TurnRight(): # Right wheel stationary left moves
     global velocity, rotation
     rotation = velocity
-    velocity = -rotation # Right wheel stationary left moves
-    #leftFor.ChangeDutyCycle(leftDutyCycle)
-    #leftBac.ChangeDutyCycle(0)
-    #rightFor.ChangeDutyCycle(0)
-    #rightBac.ChangeDutyCycle(0)      
+    velocity = -rotation
 
 # Step/time parameters
 lasttime = time.time() # Variable to store time for timesteps
@@ -329,8 +305,8 @@ while True:
             else:
                 Stopped = False
                 #Get action
-                velocity = 50
-                Forward()
+                velocity = 0
+                #Forward()
                 Act()
             # add some data to a dictionary
             PID_data['t'].append(t)
