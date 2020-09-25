@@ -171,8 +171,8 @@ while noData == True:
 print("DATA", dataList)
 
 # Movement variables
-velocity = 50
-bearing = 0
+velocity = 0
+bearing = 90
 rotation = 0
 rotationAccuracy = 1
 
@@ -182,7 +182,7 @@ LTPI, RTPI = velocity, velocity # Ticks per Interval, initial setpoint
 #tunings = (1.1, 0.5, 0.5) # makes a bit of a waddle
 #tunings = (1.3, 0.7, 0.075) # a little slower to converge but steadiest
 tunings = (1.0, 0.5, 0.05) # Default
-rotationalTunings = (1.1, 0.5, 0.06)
+rotationalTunings = (0.5, 0.5, 0.06)
 leftMotor_PID = PID(1.0, 0.5, 0.05, setpoint=LTPI)
 rightMotor_PID = PID(1.0, 0.5, 0.05, setpoint=RTPI)
 rotational_PID = PID(1.0, 0.5, 0.05, setpoint=0)
@@ -249,7 +249,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     global velocity, rotation, bearing, rotationAccuracy
     global leftDutyCycle, rightDutyCycle
     print ('Velocity', velocity, 'Rotation', rotation)
-    '''bearing = theta
+    bearing = theta
     bearing -= int(bearing/360) * 360
     if bearing > 180:
         bearing -= 360
@@ -259,8 +259,8 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     if -rotationAccuracy < rotationError < rotationAccuracy:
         rotation = 0
     else:
-        rotation = rotational_PID(rotationError)
-    print('Rotation Error = ', rotationError, '. Rotation = ', rotation)'''
+        rotation += rotational_PID(rotationError)
+    print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
     # If bearing not involved : go straight to here ---
     leftMotor_PID.setpoint = velocity - rotation #
     rightMotor_PID.setpoint = velocity + rotation #
