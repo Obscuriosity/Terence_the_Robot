@@ -236,6 +236,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
         rotation = 0
     else:
         rotation += rotational_PID(rotationError)
+        rotation = max(min(100, rotation), -100)
     print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
     # If bearing not involved : go straight to here ---
     leftMotor_PID.setpoint = velocity - rotation #
