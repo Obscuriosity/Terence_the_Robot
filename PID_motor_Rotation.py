@@ -237,7 +237,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     else:
         rotation += rotational_PID(rotationError)
         rotation = max(min(100, rotation), -100)
-    print('Rotation Error = ', rotationError, '. Rotation = ', rotation)
+    print('Rotation Error = ', round(rotationError, 2), '. Rotation = ', round(rotation, 2))
     # If bearing not involved : go straight to here ---
     leftMotor_PID.setpoint = velocity - rotation #
     rightMotor_PID.setpoint = velocity + rotation #
@@ -250,7 +250,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
         rightDutyCycle = 0
     leftDutyCycle = max(min(100, leftDutyCycle), -100)  # The motor speed needs to be between 0 and 100, so clamp the value using max and min
     rightDutyCycle = max(min(100, rightDutyCycle), -100)
-    print(leftDutyCycle, ' Duty Cycles ', rightDutyCycle)
+    print(round(leftDutyCycle, 2), ' Duty Cycles ', round(rightDutyCycle, 2))
     # Move the motors
     # Minus values move the wheels backwards and positive values forward.
     if leftDutyCycle < 0:
