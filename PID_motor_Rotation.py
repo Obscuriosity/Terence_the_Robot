@@ -306,7 +306,7 @@ while True:
             else:
                 Stopped = False
                 #Get action
-                velocity = 0
+                velocity = 60
                 Forward()
                 Act()
             # add some data to a dictionary
