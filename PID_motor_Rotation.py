@@ -290,6 +290,11 @@ while True:
             # Get Action
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == True:
+                    Act()
+                if Stopped == False:
+                    Stop()
+                    time.sleep(.5)
+                    Stopped = True
                     if LB == 0:
                         SpinLeft()
                         print("Left Hit")
@@ -299,11 +304,6 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                    Act()
-                if Stopped == False:
-                    Stop()
-                    time.sleep(.5)
-                    Stopped = True
                     
             else:
                 Stopped = False
