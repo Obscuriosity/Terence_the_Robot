@@ -291,7 +291,7 @@ while True:
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
                 if Stopped == False:
                     Stop()
-                    time.sleep(.1)
+                    time.sleep(.5)
                     Stopped = True
                     if LB == 0:
                         SpinLeft()
