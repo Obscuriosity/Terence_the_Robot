@@ -147,8 +147,8 @@ while noData == True:
 print("DATA", dataList)
 
 # Movement variables
-velocity = 0
-bearing = -90
+velocity = 60
+bearing = 0
 rotation = 0
 rotationAccuracy = 1
 
@@ -225,7 +225,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     global velocity, rotation, bearing, rotationAccuracy
     global leftDutyCycle, rightDutyCycle
     print ('Velocity', velocity, 'Rotation', round(rotation, 2))
-    #bearing = theta
+    '''#bearing = theta
     bearing -= int(bearing/360) * 360
     if bearing > 180:
         bearing -= 360
@@ -237,7 +237,7 @@ def Act(): # velocity, rotation, bearing) # Motor control PID function ---------
     else:
         rotation = rotational_PID(rotationError)
         rotation = max(min(100, rotation), -100)
-    print('Rotation Error = ', round(rotationError, 2), '. Rotation = ', round(rotation, 2))
+    print('Rotation Error = ', round(rotationError, 2), '. Rotation = ', round(rotation, 2))'''
     # If bearing not involved : go straight to here ---
     leftMotor_PID.setpoint = velocity - rotation #
     rightMotor_PID.setpoint = velocity + rotation #
