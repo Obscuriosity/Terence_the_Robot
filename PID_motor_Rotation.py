@@ -289,10 +289,7 @@ while True:
             RB = dataList[2]
             # Get Action
             if LB == 0 or FB == 0 or RB == 0: # if bumpers are hit, Stop.
-                if Stopped == False:
-                    Stop()
-                    time.sleep(.5)
-                    Stopped = True
+                if Stopped == True:
                     if LB == 0:
                         SpinLeft()
                         print("Left Hit")
@@ -302,7 +299,11 @@ while True:
                     elif RB == 0:
                         SpinRight()
                         print('Right Hit')
-                Act()
+                    Act()
+                if Stopped == False:
+                    Stop()
+                    time.sleep(.5)
+                    Stopped = True
                     
             else:
                 Stopped = False
