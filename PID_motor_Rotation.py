@@ -148,7 +148,7 @@ print("DATA", dataList)
 
 # Movement variables
 velocity = 0
-bearing = 90
+bearing = -90
 rotation = 0
 rotationAccuracy = 1
 
