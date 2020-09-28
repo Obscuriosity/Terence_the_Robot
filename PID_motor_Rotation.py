@@ -307,7 +307,7 @@ while True:
                 Stopped = False
                 #Get action
                 velocity = 0
-                #Forward()
+                Forward()
                 Act()
             # add some data to a dictionary
             PID_data['t'].append(t)
